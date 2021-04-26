@@ -6,7 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/MiniCModel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/MiniCCompiler"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Parser"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -15,7 +15,7 @@ public class Instruction
 	public Instruction(Opcode opcode, int immediate)
 	{
 		if(!opcode.hasImmediate())
-			throw new IllegalArgumentException(opcode.getOpcodeName() + " has no immediate, but one was given");
+			throw new IllegalArgumentException(opcode.getOpcodeName() + " doesn't have an immediate, but one was given");
 		this.opcode = opcode;
 		this.immediate = immediate;
 	}
@@ -29,5 +29,11 @@ public class Instruction
 		if(!opcode.hasImmediate())
 			throw new IllegalArgumentException(opcode.getOpcodeName() + " has no immediate");
 		return immediate;
+	}
+
+	@Override
+	public String toString()
+	{
+		return opcode + (opcode.hasImmediate() ? " " + immediate : "");
 	}
 }

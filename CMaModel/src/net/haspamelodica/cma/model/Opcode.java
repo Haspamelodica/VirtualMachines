@@ -48,7 +48,7 @@ public enum Opcode
 	enter(true),
 	alloc(true),
 	return_("return"),
-	slide,
+	slide(true),
 
 	//heap
 	new_("new"),
@@ -87,5 +87,11 @@ public enum Opcode
 	public String getOpcodeName()
 	{
 		return opcodeName;
+	}
+
+	@Override
+	public String toString()
+	{
+		return getOpcodeName();
 	}
 }
