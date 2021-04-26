@@ -16,8 +16,17 @@ public class FunctionType implements Type
 	@Override
 	public boolean isAssignableTo(Type other)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if(!(other instanceof FunctionType))
+			return false;
+		FunctionType otherF = (FunctionType) other;
+		if(!returnType.isAssignableTo(otherF.getReturnType()))
+			return false;
+		if(parameterTypes.size() != otherF.parameterTypes.size())
+			return false;
+		for(int i = 0; i < parameterTypes.size(); i ++)
+			if(!otherF.parameterTypes.get(i).isAssignableTo(parameterTypes.get(i)))
+				return false;
+		return true;
 	}
 	@Override
 	public int size()

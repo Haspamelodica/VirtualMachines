@@ -19,7 +19,6 @@ public interface Expression
 	public default void appendCodeStore(Assembler assembler, AddressEnvironment rho)
 	{
 		appendCodeL(assembler, rho);
-		//TODO what about types with size != 1?
 		assembler.append(store);
 	}
 

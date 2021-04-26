@@ -20,8 +20,12 @@ public class Assignment implements Expression
 	public Type getType(AddressEnvironment rho, boolean check)
 	{
 		Type lhsType = lhs.getType(rho, check);
-		if(check && !rhs.getType(rho, check).isAssignableTo(lhsType))
-			throw new CompilerException("Assignment's RHS type is not assignable to LHS type");
+		if(check)
+		{
+			//TODO check if the lhs type is something that actually can be assigned to
+			if(!rhs.getType(rho, check).isAssignableTo(lhsType))
+				throw new CompilerException("Assignment's RHS type is not assignable to LHS type");
+		}
 		return lhsType;
 	}
 	@Override
