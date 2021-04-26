@@ -1,4 +1,4 @@
-package net.haspamelodica.minic.compiler;
+package net.haspamelodica.minic.compiler.environment;
 
 import static net.haspamelodica.cma.model.Opcode.loada;
 import static net.haspamelodica.cma.model.Opcode.loadc;
@@ -8,31 +8,36 @@ import static net.haspamelodica.cma.model.Opcode.storea;
 import static net.haspamelodica.cma.model.Opcode.storer;
 
 import net.haspamelodica.cma.model.Opcode;
-import net.haspamelodica.minic.compiler.AddressEnvironment.Tag;
+import net.haspamelodica.minic.compiler.Assembler;
 import net.haspamelodica.minic.compiler.Assembler.Label;
+import net.haspamelodica.minic.model.types.FunctionType;
+import net.haspamelodica.minic.model.types.Type;
 
 public class TaggedVariable
 {
 	private final Tag	tag;
+	private final Type	type;
 	private final int	constantAddress;
 	private final Label	labelAddress;
 
-	public TaggedVariable(Tag tag, int constantAddress)
+	public TaggedVariable(Tag tag, Type type, int constantAddress)
 	{
 		this.tag = tag;
+		this.type = type;
 		this.constantAddress = constantAddress;
 		this.labelAddress = null;
 	}
-	public TaggedVariable(Tag tag, Label labelAddress)
+	public TaggedVariable(Tag tag, Type type, Label labelAddress)
 	{
 		this.tag = tag;
+		this.type = type;
 		this.constantAddress = -1;
 		this.labelAddress = labelAddress;
 	}
 
 	public void appendCodeR(Assembler assembler)
 	{
-		appendOpcodeWithArgument(assembler, switch(tag)
+		appendOpcodeWithArgument(assembler, (type instanceof FunctionType) ? loadc : switch(tag)
 		{
 			case GLOBAL -> loada;
 			case LOCAL -> loadr;
@@ -65,6 +70,10 @@ public class TaggedVariable
 	public Tag getTag()
 	{
 		return tag;
+	}
+	public Type getType()
+	{
+		return type;
 	}
 	public boolean hasLabelAddress()
 	{

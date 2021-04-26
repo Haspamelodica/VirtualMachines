@@ -12,6 +12,11 @@ public enum PrimitiveType implements Type
 	}
 
 	@Override
+	public boolean isAssignableTo(Type other)
+	{
+		return equals(other);
+	}
+	@Override
 	public int size()
 	{
 		return 1;

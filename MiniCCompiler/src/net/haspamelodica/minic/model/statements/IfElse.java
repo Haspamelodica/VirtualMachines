@@ -3,9 +3,9 @@ package net.haspamelodica.minic.model.statements;
 import static net.haspamelodica.cma.model.Opcode.jump;
 import static net.haspamelodica.cma.model.Opcode.jumpz;
 
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
 import net.haspamelodica.minic.compiler.Assembler.Label;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
 import net.haspamelodica.minic.model.expressions.Expression;
 
 public class IfElse implements Statement
@@ -35,9 +35,9 @@ public class IfElse implements Statement
 		assembler.labelNextInstruction(B);
 	}
 	@Override
-	public int maxStackSize()
+	public int maxStackSize(AddressEnvironment rho)
 	{
-		return Math.max(condition.maxStackSizeR(), Math.max(thenBranch.maxStackSize(), elseBranch.maxStackSize()));
+		return Math.max(condition.maxStackSizeR(rho), Math.max(thenBranch.maxStackSize(rho), elseBranch.maxStackSize(rho)));
 	}
 
 	public Expression getCondition()

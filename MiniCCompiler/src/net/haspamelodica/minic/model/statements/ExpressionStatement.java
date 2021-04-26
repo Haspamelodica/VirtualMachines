@@ -2,8 +2,8 @@ package net.haspamelodica.minic.model.statements;
 
 import static net.haspamelodica.cma.model.Opcode.pop;
 
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
 import net.haspamelodica.minic.model.expressions.Expression;
 
 public class ExpressionStatement implements Statement
@@ -22,9 +22,9 @@ public class ExpressionStatement implements Statement
 		assembler.append(pop);
 	}
 	@Override
-	public int maxStackSize()
+	public int maxStackSize(AddressEnvironment rho)
 	{
-		return expression.maxStackSizeR();
+		return expression.maxStackSizeR(rho);
 	}
 
 	public Expression getExpression()

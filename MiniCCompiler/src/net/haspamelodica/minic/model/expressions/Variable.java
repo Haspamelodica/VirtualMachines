@@ -1,8 +1,9 @@
 package net.haspamelodica.minic.model.expressions;
 
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
-import net.haspamelodica.minic.compiler.TaggedVariable;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
+import net.haspamelodica.minic.compiler.environment.TaggedVariable;
+import net.haspamelodica.minic.model.types.Type;
 
 public class Variable implements Expression
 {
@@ -13,6 +14,11 @@ public class Variable implements Expression
 		this.name = name;
 	}
 
+	@Override
+	public Type getType(AddressEnvironment rho, boolean check)
+	{
+		return getVariable(rho).getType();
+	}
 	@Override
 	public void appendCodeR(Assembler assembler, AddressEnvironment rho)
 	{
@@ -33,7 +39,7 @@ public class Variable implements Expression
 		return rho.getVariable(getName());
 	}
 	@Override
-	public int maxStackSizeR()
+	public int maxStackSizeR(AddressEnvironment rho)
 	{
 		return 1;
 	}

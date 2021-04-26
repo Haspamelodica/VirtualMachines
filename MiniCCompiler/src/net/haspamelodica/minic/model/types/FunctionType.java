@@ -14,6 +14,12 @@ public class FunctionType implements Type
 	}
 
 	@Override
+	public boolean isAssignableTo(Type other)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
 	public int size()
 	{
 		throw new IllegalArgumentException("A function type does not have a size");

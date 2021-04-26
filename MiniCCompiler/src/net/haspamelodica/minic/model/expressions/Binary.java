@@ -16,8 +16,11 @@ import static net.haspamelodica.cma.model.Opcode.sub;
 import static net.haspamelodica.cma.model.Opcode.xor;
 
 import net.haspamelodica.cma.model.Opcode;
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
+import net.haspamelodica.minic.compiler.exeptions.CompilerException;
+import net.haspamelodica.minic.model.types.PrimitiveType;
+import net.haspamelodica.minic.model.types.Type;
 
 public class Binary implements Expression
 {
@@ -33,6 +36,16 @@ public class Binary implements Expression
 	}
 
 	@Override
+	public Type getType(AddressEnvironment rho, boolean check)
+	{
+		if(check)
+			if(!lhs.getType(rho, check).isAssignableTo(PrimitiveType.int_))
+				throw new CompilerException("Binary's LHS type not assignable to int");
+			else if(!rhs.getType(rho, check).isAssignableTo(PrimitiveType.int_))
+				throw new CompilerException("Binary's RHS type not assignable to int");
+		return PrimitiveType.int_;
+	}
+	@Override
 	public void appendCodeR(Assembler assembler, AddressEnvironment rho)
 	{
 		lhs.appendCodeR(assembler, rho);
@@ -40,9 +53,9 @@ public class Binary implements Expression
 		assembler.append(operation.getOpcode());
 	}
 	@Override
-	public int maxStackSizeR()
+	public int maxStackSizeR(AddressEnvironment rho)
 	{
-		return Math.max(lhs.maxStackSizeR(), 1 + rhs.maxStackSizeR());
+		return Math.max(lhs.maxStackSizeR(rho), 1 + rhs.maxStackSizeR(rho));
 	}
 
 	public Expression getLhs()

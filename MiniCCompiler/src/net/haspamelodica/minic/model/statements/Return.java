@@ -3,8 +3,8 @@ package net.haspamelodica.minic.model.statements;
 import static net.haspamelodica.cma.model.Opcode.return_;
 import static net.haspamelodica.cma.model.Opcode.storer;
 
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
 import net.haspamelodica.minic.model.expressions.Expression;
 
 public class Return implements Statement
@@ -24,9 +24,9 @@ public class Return implements Statement
 		assembler.append(return_);
 	}
 	@Override
-	public int maxStackSize()
+	public int maxStackSize(AddressEnvironment rho)
 	{
-		return returnValue.maxStackSizeR();
+		return returnValue.maxStackSizeR(rho);
 	}
 
 	public Expression getReturnValue()

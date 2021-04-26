@@ -9,13 +9,19 @@ import static net.haspamelodica.cma.model.Opcode.mark;
 import static net.haspamelodica.cma.model.Opcode.return_;
 import static net.haspamelodica.cma.model.Opcode.slide;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.haspamelodica.cma.model.debugging.CMaProgramForDebugging;
 import net.haspamelodica.minic.compiler.Assembler.Label;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
 import net.haspamelodica.minic.model.Function;
 import net.haspamelodica.minic.model.MiniCProgram;
 import net.haspamelodica.minic.model.Parameter;
 import net.haspamelodica.minic.model.VariableDeclaration;
 import net.haspamelodica.minic.model.statements.Statement;
+import net.haspamelodica.minic.model.types.FunctionType;
+import net.haspamelodica.minic.model.types.Type;
 
 public class MiniCCompiler
 {
@@ -52,7 +58,8 @@ public class MiniCCompiler
 		for(Function function : minicProgram.getFunctions())
 		{
 			Label functionLabel = function.getName().equals("main") ? mainLabel : assembler.createLabel("_" + function.getName());
-			rho = rho.withGlobalVariable(function.getName(), functionLabel);
+			List<Type> parameterTypes = function.getFormalParameters().stream().map(Parameter::getType).collect(Collectors.toList());
+			rho = rho.withGlobalVariable(function.getName(), new FunctionType(parameterTypes, function.getReturnType()), functionLabel);
 			assembler.labelNextInstruction(functionLabel);
 			compile(function, rho);
 		}
@@ -65,17 +72,17 @@ public class MiniCCompiler
 			int sizePerName = globalVariable.getType().size();
 			for(String name : globalVariable.getNames())
 			{
-				rho = rho.withGlobalVariable(name, nextVariableOffset);
+				rho = rho.withGlobalVariable(name, globalVariable.getType(), nextVariableOffset);
 				nextVariableOffset += sizePerName;
 			}
 		}
-		return nextVariableOffset;
+		return nextVariableOffset - 1;
 	}
 	private void compile(Function function, AddressEnvironment rho)
 	{
 		AddressEnvironment rhoInFunction = calculateRhoInFunction(function, rho);
 
-		assembler.append(enter, function.localVariableSize() + function.maxStackSize());
+		assembler.append(enter, function.localVariableSize() + function.maxStackSize(rhoInFunction));
 		assembler.append(alloc, function.localVariableSize());
 		for(Statement statement : function.getStatements())
 			statement.appendCode(assembler, rhoInFunction);
@@ -90,7 +97,7 @@ public class MiniCCompiler
 		for(Parameter parameter : function.getFormalParameters())
 		{
 			lastParameterOffset -= parameter.getType().size();
-			rhoInFunction = rhoInFunction.withLocalVariable(parameter.getName(), lastParameterOffset);
+			rhoInFunction = rhoInFunction.withLocalVariable(parameter.getName(), parameter.getType(), lastParameterOffset);
 		}
 
 		int nextVariableOffset = 1;
@@ -99,7 +106,7 @@ public class MiniCCompiler
 			int size = variableDeclaration.getType().size();
 			for(String name : variableDeclaration.getNames())
 			{
-				rhoInFunction = rhoInFunction.withLocalVariable(name, nextVariableOffset);
+				rhoInFunction = rhoInFunction.withLocalVariable(name, variableDeclaration.getType(), nextVariableOffset);
 				nextVariableOffset += size;
 			}
 		}

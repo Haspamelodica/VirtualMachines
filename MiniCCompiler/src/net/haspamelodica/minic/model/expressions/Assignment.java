@@ -1,7 +1,9 @@
 package net.haspamelodica.minic.model.expressions;
 
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
+import net.haspamelodica.minic.compiler.exeptions.CompilerException;
+import net.haspamelodica.minic.model.types.Type;
 
 public class Assignment implements Expression
 {
@@ -15,15 +17,23 @@ public class Assignment implements Expression
 	}
 
 	@Override
+	public Type getType(AddressEnvironment rho, boolean check)
+	{
+		Type lhsType = lhs.getType(rho, check);
+		if(check && !rhs.getType(rho, check).isAssignableTo(lhsType))
+			throw new CompilerException("Assignment's RHS type is not assignable to LHS type");
+		return lhsType;
+	}
+	@Override
 	public void appendCodeR(Assembler assembler, AddressEnvironment rho)
 	{
 		rhs.appendCodeR(assembler, rho);
 		lhs.appendCodeStore(assembler, rho);
 	}
 	@Override
-	public int maxStackSizeR()
+	public int maxStackSizeR(AddressEnvironment rho)
 	{
-		return Math.max(rhs.maxStackSizeR(), 1 + lhs.maxStackSizeStore());
+		return Math.max(rhs.maxStackSizeR(rho), 1 + lhs.maxStackSizeStore());
 	}
 
 	public Expression getLhs()

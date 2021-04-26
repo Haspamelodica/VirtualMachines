@@ -2,8 +2,8 @@ package net.haspamelodica.minic.model.statements;
 
 import java.util.List;
 
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
 
 public class Composite implements Statement
 {
@@ -21,9 +21,9 @@ public class Composite implements Statement
 			statement.appendCode(assembler, rho);
 	}
 	@Override
-	public int maxStackSize()
+	public int maxStackSize(AddressEnvironment rho)
 	{
-		return statements.stream().mapToInt(Statement::maxStackSize).max().orElse(0);
+		return statements.stream().mapToInt(s -> s.maxStackSize(rho)).max().orElse(0);
 	}
 
 	public List<Statement> getStatements()

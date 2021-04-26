@@ -4,8 +4,11 @@ import static net.haspamelodica.cma.model.Opcode.neg;
 import static net.haspamelodica.cma.model.Opcode.not;
 
 import net.haspamelodica.cma.model.Opcode;
-import net.haspamelodica.minic.compiler.AddressEnvironment;
 import net.haspamelodica.minic.compiler.Assembler;
+import net.haspamelodica.minic.compiler.environment.AddressEnvironment;
+import net.haspamelodica.minic.compiler.exeptions.CompilerException;
+import net.haspamelodica.minic.model.types.PrimitiveType;
+import net.haspamelodica.minic.model.types.Type;
 
 public class Unary implements Expression
 {
@@ -19,15 +22,22 @@ public class Unary implements Expression
 	}
 
 	@Override
+	public Type getType(AddressEnvironment rho, boolean check)
+	{
+		if(check && !rhs.getType(rho, check).isAssignableTo(PrimitiveType.int_))
+			throw new CompilerException("RHS type not assignable to int");
+		return PrimitiveType.int_;
+	}
+	@Override
 	public void appendCodeR(Assembler assembler, AddressEnvironment rho)
 	{
 		rhs.appendCodeR(assembler, rho);
 		assembler.append(operation.getOpcode());
 	}
 	@Override
-	public int maxStackSizeR()
+	public int maxStackSizeR(AddressEnvironment rho)
 	{
-		return rhs.maxStackSizeR();
+		return rhs.maxStackSizeR(rho);
 	}
 
 	public UnaryOp getOperation()
