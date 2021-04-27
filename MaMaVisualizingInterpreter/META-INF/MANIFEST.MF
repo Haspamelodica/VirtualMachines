@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MaMaVisualizingInterpreter
+Bundle-SymbolicName: MaMaVisualizingInterpreter
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-15
+Automatic-Module-Name: MaMaVisualizingInterpreter
+Export-Package: net.haspamelodica.mama.interpreter.visualizing,
+ net.haspamelodica.mama.interpreter.visualizing.heap,
+ net.haspamelodica.mama.interpreter.visualizing.stack
+Require-Bundle: org.eclipse.swt;bundle-version="3.116.0",
+ SWTZoomableCanvas;bundle-version="1.0.0"

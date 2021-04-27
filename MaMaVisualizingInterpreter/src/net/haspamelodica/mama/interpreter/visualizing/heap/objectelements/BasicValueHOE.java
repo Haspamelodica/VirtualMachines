@@ -1,0 +1,26 @@
+package net.haspamelodica.mama.interpreter.visualizing.heap.objectelements;
+
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawTextCentered;
+
+import net.haspamelodica.swt.helper.gcs.GeneralGC;
+
+public class BasicValueHOE implements DrawableHeapObjectElement
+{
+	private final int value;
+
+	public BasicValueHOE(int value)
+	{
+		this.value = value;
+	}
+
+	public int getValue()
+	{
+		return value;
+	}
+
+	@Override
+	public void draw(GeneralGC gc, double x, double y, double width, double height)
+	{
+		drawTextCentered(gc, Integer.toString(value), x, y, width, height);
+	}
+}
