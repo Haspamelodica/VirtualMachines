@@ -1,4 +1,4 @@
-package net.haspamelodica.mama.interpreter.visualizing;
+package net.haspamelodica.mama.interpreter.visualizing.main;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,9 +9,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.haspamelodica.mama.MaMaParser;
+import net.haspamelodica.mama.interpreter.visualizing.MaMaVisualizer;
 import net.haspamelodica.mama.model.debugging.MaMaProgramForDebugging;
 
-public class MaMaPlayground
+public class MaMaVisualizerMain
 {
 	public static void main(String[] args) throws IOException
 	{
