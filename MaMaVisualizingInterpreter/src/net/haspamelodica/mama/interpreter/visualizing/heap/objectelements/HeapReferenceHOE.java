@@ -28,4 +28,10 @@ public class HeapReferenceHOE implements DrawableHeapObjectElement
 	{
 		return referencedObject;
 	}
+
+	@Override
+	public Type getType()
+	{
+		return Type.HEAP_REFERENCE;
+	}
 }

@@ -1,7 +1,6 @@
 package net.haspamelodica.mama.interpreter.visualizing.heap.objectelements;
 
-import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawTextCentered;
-
+import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
 
 public class CodePointerHOE implements DrawableHeapObjectElement
@@ -13,16 +12,21 @@ public class CodePointerHOE implements DrawableHeapObjectElement
 		this.pointer = pointer;
 	}
 
+	@Override
+	public void draw(GeneralGC gc, double x, double y, double width, double height)
+	{
+		gc.setBackground(MaMaGUI.CODE_REF_BG);
+		gc.fillRectangle(x, y, width, height);
+	}
+
 	public int getPointer()
 	{
 		return pointer;
 	}
 
 	@Override
-	public void draw(GeneralGC gc, double x, double y, double width, double height)
+	public Type getType()
 	{
-		// TODO background
-		// TODO draw a line to the referenced code part
-		drawTextCentered(gc, "code pointer " + pointer, x, y, width, height);
+		return Type.CODE_POINTER;
 	}
 }

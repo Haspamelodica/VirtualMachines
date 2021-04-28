@@ -14,16 +14,22 @@ public class BasicValueHOE implements DrawableHeapObjectElement
 		this.value = value;
 	}
 
-	public int getValue()
-	{
-		return value;
-	}
-
 	@Override
 	public void draw(GeneralGC gc, double x, double y, double width, double height)
 	{
 		gc.setBackground(VisualizingHeapObject.DEFAULT_BG);
 		gc.fillRectangle(x, y, width, height);
 		drawTextCentered(gc, Integer.toString(value), x, y, width, height);
+	}
+
+	public int getValue()
+	{
+		return value;
+	}
+
+	@Override
+	public Type getType()
+	{
+		return Type.BASIC_VALUE;
 	}
 }

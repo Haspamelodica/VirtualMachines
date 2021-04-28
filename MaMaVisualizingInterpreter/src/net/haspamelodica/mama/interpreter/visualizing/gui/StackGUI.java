@@ -22,15 +22,15 @@ public class StackGUI extends Canvas
 	private final VisualizingStack stack;
 
 	private final Supplier<org.eclipse.swt.graphics.Point>	getHeapOffset;
-	private final Consumer<GeneralGC>						drawStackToHeapRefs;
+	private final Consumer<GeneralGC>						drawHeapCrossrefs;
 
-	public StackGUI(Composite parent, Supplier<org.eclipse.swt.graphics.Point> getHeapOffset, Consumer<GeneralGC> drawStackToHeapRefs,
+	public StackGUI(Composite parent, Supplier<org.eclipse.swt.graphics.Point> getHeapOffset, Consumer<GeneralGC> drawHeapCrossrefs,
 			VisualizingStack stack)
 	{
 		super(parent, SWT.DOUBLE_BUFFERED);
 		this.stack = stack;
 		this.getHeapOffset = getHeapOffset;
-		this.drawStackToHeapRefs = drawStackToHeapRefs;
+		this.drawHeapCrossrefs = drawHeapCrossrefs;
 		setSize(WIDTH, SWT.DEFAULT);
 		addPaintListener(e -> draw(e.gc));
 	}
@@ -54,7 +54,7 @@ public class StackGUI extends Canvas
 		GeneralGC gc = new SWTGC(swtgc);
 		org.eclipse.swt.graphics.Point heapOffset = getHeapOffset.get();
 		TranslatedGC tgc = new TranslatedGC(gc, heapOffset.x, heapOffset.y);
-		drawStackToHeapRefs.accept(tgc);
+		drawHeapCrossrefs.accept(tgc);
 		tgc.disposeThisLayer();
 		gc.disposeThisLayer();
 	}

@@ -3,7 +3,9 @@ package net.haspamelodica.mama.interpreter.visualizing.gui;
 import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawTextCentered;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -13,6 +15,9 @@ import org.eclipse.swt.widgets.Composite;
 
 import net.haspamelodica.mama.model.Instruction;
 import net.haspamelodica.mama.model.MaMaProgram;
+import net.haspamelodica.swt.helper.gcs.GeneralGC;
+import net.haspamelodica.swt.helper.gcs.SWTGC;
+import net.haspamelodica.swt.helper.gcs.TranslatedGC;
 
 public class CodeGUI extends Canvas
 {
@@ -24,11 +29,17 @@ public class CodeGUI extends Canvas
 	private final MaMaProgram	program;
 	private final IntSupplier	getCurrentCodePointer;
 
-	public CodeGUI(Composite parent, Composite commonParent, MaMaProgram program, IntSupplier getCurrentCodePointer)
+	private final Supplier<org.eclipse.swt.graphics.Point>	getHeapOffset;
+	private final Consumer<GeneralGC>						drawHeapCrossrefs;
+
+	public CodeGUI(Composite parent, Supplier<org.eclipse.swt.graphics.Point> getHeapOffset, Consumer<GeneralGC> drawHeapCrossrefs,
+			MaMaProgram program, IntSupplier getCurrentCodePointer)
 	{
 		super(parent, SWT.DOUBLE_BUFFERED);
 		this.program = program;
 		this.getCurrentCodePointer = getCurrentCodePointer;
+		this.getHeapOffset = getHeapOffset;
+		this.drawHeapCrossrefs = drawHeapCrossrefs;
 		setSize(WIDTH, SWT.DEFAULT);
 		addPaintListener(e -> draw(e.gc));
 	}
@@ -52,7 +63,12 @@ public class CodeGUI extends Canvas
 		}
 		swtgc.drawLine(0, y, WIDTH, y);
 
-		//TODO draw code references
+		GeneralGC gc = new SWTGC(swtgc);
+		org.eclipse.swt.graphics.Point heapOffset = getHeapOffset.get();
+		TranslatedGC tgc = new TranslatedGC(gc, heapOffset.x, heapOffset.y);
+		drawHeapCrossrefs.accept(tgc);
+		tgc.disposeThisLayer();
+		gc.disposeThisLayer();
 	}
 
 	public int getHeight()

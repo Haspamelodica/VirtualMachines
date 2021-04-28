@@ -22,7 +22,10 @@ import net.haspamelodica.mama.model.MaMaProgram;
 
 public class MaMaGUI
 {
-	public static final Color HEAP_REF_BG = new Color(255, 200, 200);
+	public static final Color	HEAP_REF_BG	= new Color(255, 200, 200);
+	public static final Color	HEAP_REF_FG	= new Color(255, 0, 0);
+	public static final Color	CODE_REF_BG	= new Color(200, 200, 255);
+	public static final Color	CODE_REF_FG	= new Color(0, 0, 255);
 
 	private static final int MARGIN = 5;
 
@@ -77,7 +80,11 @@ public class MaMaGUI
 		codeScroller.setExpandVertical(true);
 		codeScroller.setAlwaysShowScrollBars(true);
 
-		codeGUI = new CodeGUI(codeScroller, shell, program, getCurrentCodePointer);
+		codeGUI = new CodeGUI(codeScroller, () -> getClientAreaOffset(codeGUI, heapGUI, shell), gc -> heapGUI.drawCodeRefs(gc),
+				program, getCurrentCodePointer);
+		codeGUI.addListener(SWT.Move, e -> heapGUI.redraw());
+		codeGUI.addListener(SWT.Move, e -> codeGUI.redraw());
+		codeScroller.addListener(SWT.Move, e -> codeGUI.redraw());
 
 		codeScroller.setContent(codeGUI);
 		codeScroller.setMinHeight(codeGUI.getHeight());
@@ -88,7 +95,8 @@ public class MaMaGUI
 	}
 	private void setupHeapGUI(VisualizingStack stack, VisualizingHeap heap)
 	{
-		heapGUI = new HeapGUI(shell, () -> getClientAreaOffset(heapGUI, stackGUI, shell), stack, heap);
+		heapGUI = new HeapGUI(shell, () -> getClientAreaOffset(heapGUI, stackGUI, shell),
+				() -> getClientAreaOffset(heapGUI, codeGUI, shell), stack, heap);
 		heapGUI.addTransformListener((x, y, z) -> display.asyncExec(stackGUI::redraw));
 		heapGUI.addTransformListener((x, y, z) -> display.asyncExec(codeGUI::redraw));
 	}
@@ -108,6 +116,7 @@ public class MaMaGUI
 
 		stackGUI = new StackGUI(stackScroller, () -> getClientAreaOffset(stackGUI, heapGUI, shell), heapGUI::drawStackRefs, stack);
 		stackGUI.addListener(SWT.Move, e -> heapGUI.redraw());
+		stackGUI.addListener(SWT.Move, e -> stackGUI.redraw());
 		stackScroller.addListener(SWT.Move, e -> stackGUI.redraw());
 
 		stackScroller.setContent(stackGUI);

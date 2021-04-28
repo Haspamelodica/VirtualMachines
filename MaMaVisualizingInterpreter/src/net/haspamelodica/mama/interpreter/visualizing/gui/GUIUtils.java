@@ -11,13 +11,14 @@ import net.haspamelodica.swt.helper.swtobjectwrappers.Rectangle;
 
 public class GUIUtils
 {
-	private static final Color HEAP_REF_COLOR = new Color(255, 0, 0);
-
 	public static void drawHeapReferenceArrow(GeneralGC gc, Rectangle from, Rectangle to)
 	{
-		drawReferenceArrow(gc, from, to, HEAP_REF_COLOR);
+		drawReferenceArrow(gc, from, to, MaMaGUI.HEAP_REF_FG);
 	}
-
+	public static void drawCodeReferenceArrow(GeneralGC gc, Rectangle from, Rectangle to)
+	{
+		drawReferenceArrow(gc, from, to, MaMaGUI.CODE_REF_FG);
+	}
 	private static void drawReferenceArrow(GeneralGC gc, Rectangle from, Rectangle to, Color color)
 	{
 		Color oldForeground = gc.getForeground();
