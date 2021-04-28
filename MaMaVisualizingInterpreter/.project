@@ -3,6 +3,7 @@
 	<name>MaMaVisualizingInterpreter</name>
 	<comment></comment>
 	<projects>
+		<project>SWTZoomableCanvas</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

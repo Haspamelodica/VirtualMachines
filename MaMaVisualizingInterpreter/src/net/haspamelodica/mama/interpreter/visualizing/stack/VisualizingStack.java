@@ -1,7 +1,9 @@
 package net.haspamelodica.mama.interpreter.visualizing.stack;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.haspamelodica.mama.interpreter.exceptions.StackException;
 import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
@@ -12,20 +14,23 @@ import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElemen
 
 public class VisualizingStack implements Stack
 {
-	private final Deque<StackElement> elements;
+	private final Deque<StackElement>	elementsM;
+	private final List<StackElement>	elementsU;
 
 	private final Runnable observer;
 
 	public VisualizingStack(Runnable observer)
 	{
-		this.elements = new LinkedList<>();
+		LinkedList<StackElement> elementsMLocal = new LinkedList<>();
+		this.elementsM = elementsMLocal;
+		this.elementsU = Collections.unmodifiableList(elementsMLocal);
 		this.observer = observer;
 	}
 
 	@Override
 	public void clear()
 	{
-		elements.clear();
+		elementsM.clear();
 		observer.run();
 	}
 	@Override
@@ -49,16 +54,21 @@ public class VisualizingStack implements Stack
 		return pop().checkHeapReference().getReferencedObject();
 	}
 
+	public List<StackElement> getElements()
+	{
+		return elementsU;
+	}
+
 	private void push(StackElement value)
 	{
-		elements.push(value);
+		elementsM.push(value);
 		observer.run();
 	}
 	private StackElement pop()
 	{
-		if(elements.isEmpty())
+		if(elementsM.isEmpty())
 			throw new StackException("Popping from empty stack");
-		StackElement popped = elements.pop();
+		StackElement popped = elementsM.pop();
 		observer.run();
 		return popped;
 	}

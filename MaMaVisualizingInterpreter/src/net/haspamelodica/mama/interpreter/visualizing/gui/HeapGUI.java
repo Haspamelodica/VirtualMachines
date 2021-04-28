@@ -1,29 +1,43 @@
 package net.haspamelodica.mama.interpreter.visualizing.gui;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeap;
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObjectContent;
+import net.haspamelodica.mama.interpreter.visualizing.stack.VisualizingStack;
+import net.haspamelodica.mama.interpreter.visualizing.stack.elements.HeapReferenceSE;
+import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElement;
+import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElement.Type;
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
+import net.haspamelodica.swt.helper.gcs.SWTGC;
 import net.haspamelodica.swt.helper.swtobjectwrappers.Point;
 import net.haspamelodica.swt.helper.zoomablecanvas.ZoomableCanvas;
 import net.haspamelodica.swt.helper.zoomablecanvas.helper.ZoomableCanvasUserInput;
 
 public class HeapGUI extends ZoomableCanvas
 {
-	private final VisualizingHeap heap;
+	private final VisualizingStack	stack;
+	private final VisualizingHeap	heap;
+
+	private final Supplier<org.eclipse.swt.graphics.Point> getStackOffset;
 
 	private Point							lastMousePos;
 	private VisualizingHeapObjectContent	draggedObject;
 
-	public HeapGUI(Composite parent, VisualizingHeap heap)
+	public HeapGUI(Composite parent, Supplier<org.eclipse.swt.graphics.Point> getStackOffset, VisualizingStack stack, VisualizingHeap heap)
 	{
 		super(parent, SWT.BORDER);
+		this.stack = stack;
 		this.heap = heap;
-
+		this.getStackOffset = getStackOffset;
 		addZoomedRenderer(this::draw);
+		addPaintListener(e -> drawStackRefs(e.gc));
 		ZoomableCanvasUserInput userInput = new ZoomableCanvasUserInput(this);
 		userInput.buttonDrag = 3;
 		userInput.buttonZoom = 2;
@@ -38,6 +52,24 @@ public class HeapGUI extends ZoomableCanvas
 		gc.setLineWidth(0.5);
 		for(VisualizingHeapObjectContent heapObject : heap.getHeapObjects())
 			heapObject.draw(gc);
+	}
+
+	private void drawStackRefs(GC swtgc)
+	{
+		GeneralGC gc = new SWTGC(swtgc);
+		Point stackOffset = new Point(getStackOffset.get());
+		List<StackElement> elements = stack.getElements();
+		for(int i = 0; i < elements.size(); i ++)
+		{
+			StackElement e = elements.get(i);
+			if(e.getType() == Type.HEAP_REFERENCE)
+			{
+				VisualizingHeapObjectContent referencedObject = (VisualizingHeapObjectContent) ((HeapReferenceSE) e).getReferencedObject().getContent();
+				Point origin = worldToCanvasCoords(referencedObject.getX(), referencedObject.getY());
+				gc.drawLine(origin.x, origin.y, stackOffset.x + StackGUI.WIDTH / 2d, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i + StackGUI.ELEMENT_HEIGHT / 2d);
+			}
+		}
+		gc.disposeThisLayer();
 	}
 
 	private void mouseDown(Event e)

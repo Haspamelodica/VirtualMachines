@@ -21,7 +21,7 @@ public class MaMaVisualizer
 		this.heap = new VisualizingHeap(this::heapChanged);
 		this.interpreter = new AbstractMaMaInterpreter(program, stack, heap)
 		{};
-		this.gui = new MaMaGUI(heap, new GUICallback()
+		this.gui = new MaMaGUI(program, stack, heap, new GUICallback()
 		{
 			@Override
 			public void step()
@@ -44,11 +44,10 @@ public class MaMaVisualizer
 	//TODO add different listeners for different events to highlight what just happened
 	private void stackChanged()
 	{
-		System.out.println("stack changed");
-		//TODO
+		gui.stackChanged();
 	}
 	private void heapChanged()
 	{
-		gui.redrawHeap();
+		gui.heapChanged();
 	}
 }

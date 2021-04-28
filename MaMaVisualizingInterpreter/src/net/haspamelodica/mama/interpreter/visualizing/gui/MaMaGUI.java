@@ -1,38 +1,46 @@
 package net.haspamelodica.mama.interpreter.visualizing.gui;
 
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.getOffset;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeap;
+import net.haspamelodica.mama.interpreter.visualizing.stack.VisualizingStack;
+import net.haspamelodica.mama.model.MaMaProgram;
 
 public class MaMaGUI
 {
+	public static final Color HEAP_REF_BG = new Color(255, 200, 200);
+
 	private static final int MARGIN = 5;
 
 	private final GUICallback callback;
 
 	private final Display		display;
 	private Shell				shell;
+	private ScrolledComposite	codeScroller;
+	private CodeGUI				codeGUI;
+	private Button				buttonStep;
 	private HeapGUI				heapGUI;
 	private ScrolledComposite	stackScroller;
-	private Canvas				stackCanvas;
-	private Button				buttonStep;
+	private StackGUI			stackGUI;
 
-	public MaMaGUI(VisualizingHeap heap, GUICallback callback)
+	public MaMaGUI(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap, GUICallback callback)
 	{
 		this.callback = callback;
 		this.display = new Display();
 
-		setupShell(heap);
+		setupShell(program, stack, heap);
 	}
 
 	public void run()
@@ -44,49 +52,66 @@ public class MaMaGUI
 		display.dispose();
 	}
 
-	private void setupShell(VisualizingHeap heap)
+	private void setupShell(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap)
 	{
 		shell = new Shell();
 		shell.setText("MaMa visualizer");
 		shell.setLayout(new FormLayout());
 
-		setupHeapCanvas(shell, heap);
-		setupStackScroller(shell);
+		setupCodeScroller(shell, program);
+		setupHeapGUI(stack, heap);
+		setupStackScroller(shell, stack);
 		setupButtonStep(shell);
 
-		heapGUI.setLayoutData(formData(fa(), fa(), fa(stackScroller), fa(100)));
-		stackScroller.setLayoutData(formData(null, fa(0), fa(100), fa(buttonStep, -MARGIN)));
-		buttonStep.setLayoutData(formData(fa(heapGUI, MARGIN), null, fa(100, -MARGIN), fa(100, -MARGIN)));
+		codeScroller.setLayoutData(formData(fa(), fa(), null, fa(buttonStep, -MARGIN)));
+		buttonStep.setLayoutData(formData(fa(0, MARGIN), null, fa(heapGUI, -MARGIN), fa(100, -MARGIN)));
+		heapGUI.setLayoutData(formData(fa(codeScroller), fa(), fa(stackScroller), fa(100)));
+		stackScroller.setLayoutData(formData(null, fa(), fa(100), fa(100)));
 	}
 
-	private void setupStackScroller(Composite parent)
+	private void setupCodeScroller(Composite parent, MaMaProgram program)
 	{
-		stackScroller = new ScrolledComposite(parent, SWT.VERTICAL | SWT.BORDER);
+		codeScroller = new ScrolledComposite(parent, SWT.VERTICAL);
+		codeScroller.setExpandVertical(true);
+		codeScroller.setAlwaysShowScrollBars(true);
 
-		stackCanvas = new Canvas(stackScroller, SWT.DOUBLE_BUFFERED);
-		stackCanvas.setSize(200, SWT.DEFAULT);
+		codeGUI = new CodeGUI(codeScroller, shell, program);
 
-		stackScroller.setContent(stackCanvas);
-		stackScroller.setExpandVertical(true);
-		stackScroller.setAlwaysShowScrollBars(true);
-		stackScroller.setMinHeight(500);
+		codeScroller.setContent(codeGUI);
+		codeScroller.setMinHeight(codeGUI.getHeight());
 	}
-	private void setupHeapCanvas(Composite parent, VisualizingHeap heap)
+	private void setupHeapGUI(VisualizingStack stack, VisualizingHeap heap)
 	{
-		heapGUI = new HeapGUI(parent, heap);
+		heapGUI = new HeapGUI(shell, () -> getOffset(heapGUI, stackGUI, shell), stack, heap);
 	}
-	public void redrawHeap()
+
+	public void heapChanged()
 	{
 		display.asyncExec(heapGUI::redraw);
 	}
 
+	private void setupStackScroller(Composite parent, VisualizingStack stack)
+	{
+		stackScroller = new ScrolledComposite(parent, SWT.VERTICAL);
+		stackScroller.setExpandVertical(true);
+		stackScroller.setAlwaysShowScrollBars(true);
+
+		stackGUI = new StackGUI(stackScroller, shell, stack);
+		stackGUI.addListener(SWT.Move, e -> heapGUI.redraw());
+
+		stackScroller.setContent(stackGUI);
+	}
+	public void stackChanged()
+	{
+		display.asyncExec(() -> stackScroller.setMinHeight(stackGUI.getHeight()));
+		display.asyncExec(stackGUI::redraw);
+	}
 	private void setupButtonStep(Composite parent)
 	{
 		buttonStep = new Button(parent, SWT.PUSH);
 		buttonStep.setText("Step");
 		buttonStep.addListener(SWT.Selection, e -> callback.step());
 	}
-
 	private FormData formData(FormAttachment left, FormAttachment top, FormAttachment right, FormAttachment bottom)
 	{
 		FormData fd = new FormData();
