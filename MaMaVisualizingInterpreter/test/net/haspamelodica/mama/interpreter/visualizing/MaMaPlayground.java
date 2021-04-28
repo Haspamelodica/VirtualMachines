@@ -2,6 +2,7 @@ package net.haspamelodica.mama.interpreter.visualizing;
 
 import static net.haspamelodica.mama.model.Opcode.loadc;
 import static net.haspamelodica.mama.model.Opcode.mkbasic;
+import static net.haspamelodica.mama.model.Opcode.mkfunval;
 import static net.haspamelodica.mama.model.Opcode.mkvec;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public class MaMaPlayground
 				new Instruction(loadc, 123), new Instruction(mkbasic),
 				new Instruction(loadc, 456), new Instruction(mkbasic),
 				new Instruction(loadc, 789), new Instruction(mkbasic),
-				new Instruction(mkvec, 3)));
+				new Instruction(mkvec, 3),
+				new Instruction(mkfunval, 4)));
 		MaMaVisualizer visualizer = new MaMaVisualizer(program);
 		visualizer.run();
 	}

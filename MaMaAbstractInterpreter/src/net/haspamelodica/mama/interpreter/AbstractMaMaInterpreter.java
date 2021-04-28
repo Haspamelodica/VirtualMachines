@@ -65,6 +65,9 @@ public class AbstractMaMaInterpreter
 					referencedObjects[i] = stack.popHeapReference();
 				stack.pushHeapReference(heap.createVector(List.of(referencedObjects)));
 				return true;
+			case mkfunval:
+				stack.pushHeapReference(heap.createFunction(instruction.getImmediate(), heap.createVector(List.of()), stack.popHeapReference()));
+				return true;
 			default:
 				throw new InterpreterException("Unimplemented opcode: " + instruction.getOpcode());
 		}

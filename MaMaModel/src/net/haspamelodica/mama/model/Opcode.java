@@ -32,7 +32,8 @@ public enum Opcode
 	//heap
 	getbasic,
 	mkbasic,
-	mkvec(true);
+	mkvec(true),
+	mkfunval(true);
 
 	private final boolean	hasImmediate;
 	private final String	opcodeName;
