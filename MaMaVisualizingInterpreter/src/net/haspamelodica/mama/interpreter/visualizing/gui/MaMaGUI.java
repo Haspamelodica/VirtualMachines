@@ -2,6 +2,8 @@ package net.haspamelodica.mama.interpreter.visualizing.gui;
 
 import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.getClientAreaOffset;
 
+import java.util.function.IntSupplier;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
@@ -35,12 +37,12 @@ public class MaMaGUI
 	private ScrolledComposite	stackScroller;
 	private StackGUI			stackGUI;
 
-	public MaMaGUI(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap, GUICallback callback)
+	public MaMaGUI(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap, IntSupplier getCurrentCodePointer, GUICallback callback)
 	{
 		this.callback = callback;
 		this.display = new Display();
 
-		setupShell(program, stack, heap);
+		setupShell(program, stack, heap, getCurrentCodePointer);
 	}
 
 	public void run()
@@ -52,13 +54,13 @@ public class MaMaGUI
 		display.dispose();
 	}
 
-	private void setupShell(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap)
+	private void setupShell(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap, IntSupplier getCurrentCodePointer)
 	{
 		shell = new Shell();
 		shell.setText("MaMa visualizer");
 		shell.setLayout(new FormLayout());
 
-		setupCodeScroller(shell, program);
+		setupCodeScroller(shell, program, getCurrentCodePointer);
 		setupHeapGUI(stack, heap);
 		setupStackScroller(shell, stack);
 		setupButtonStep(shell);
@@ -69,16 +71,20 @@ public class MaMaGUI
 		stackScroller.setLayoutData(formData(null, fa(), fa(100), fa(100)));
 	}
 
-	private void setupCodeScroller(Composite parent, MaMaProgram program)
+	private void setupCodeScroller(Composite parent, MaMaProgram program, IntSupplier getCurrentCodePointer)
 	{
 		codeScroller = new ScrolledComposite(parent, SWT.VERTICAL);
 		codeScroller.setExpandVertical(true);
 		codeScroller.setAlwaysShowScrollBars(true);
 
-		codeGUI = new CodeGUI(codeScroller, shell, program);
+		codeGUI = new CodeGUI(codeScroller, shell, program, getCurrentCodePointer);
 
 		codeScroller.setContent(codeGUI);
 		codeScroller.setMinHeight(codeGUI.getHeight());
+	}
+	public void codePointerChanged()
+	{
+		display.asyncExec(codeGUI::redraw);
 	}
 	private void setupHeapGUI(VisualizingStack stack, VisualizingHeap heap)
 	{

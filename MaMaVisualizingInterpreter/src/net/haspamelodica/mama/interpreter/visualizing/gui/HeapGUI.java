@@ -74,7 +74,7 @@ public class HeapGUI extends ZoomableCanvas
 			{
 				VisualizingHeapObject referencedObject = ((HeapReferenceSE) e).getReferencedObject();
 				Rectangle referencedObjectBounds = worldToCanvasCoords(referencedObject.getBounds());
-				drawReferenceArrow(gc,
+				drawHeapReferenceArrow(gc,
 						new Rectangle(stackOffset.x, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i, StackGUI.WIDTH, StackGUI.ELEMENT_HEIGHT),
 						referencedObjectBounds);
 			}

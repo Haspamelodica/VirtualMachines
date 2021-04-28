@@ -20,8 +20,14 @@ public class MaMaVisualizer
 		this.stack = new VisualizingStack(this::stackChanged);
 		this.heap = new VisualizingHeap(this::heapChanged);
 		this.interpreter = new AbstractMaMaInterpreter(program, stack, heap)
-		{};
-		this.gui = new MaMaGUI(program, stack, heap, new GUICallback()
+		{
+			@Override
+			protected void codePointerHook(int newCodePointer)
+			{
+				gui.codePointerChanged();
+			}
+		};
+		this.gui = new MaMaGUI(program, stack, heap, interpreter::getCurrentCodePointer, new GUICallback()
 		{
 			@Override
 			public void step()

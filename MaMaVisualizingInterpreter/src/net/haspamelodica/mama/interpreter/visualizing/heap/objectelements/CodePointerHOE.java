@@ -21,6 +21,7 @@ public class CodePointerHOE implements DrawableHeapObjectElement
 	@Override
 	public void draw(GeneralGC gc, double x, double y, double width, double height)
 	{
+		// TODO background
 		// TODO draw a line to the referenced code part
 		drawTextCentered(gc, "code pointer " + pointer, x, y, width, height);
 	}

@@ -34,10 +34,12 @@ public class AbstractMaMaInterpreter
 		stack.clear();
 		heap.clear();
 		currentCodePointer = 0;
+		codePointerHook(currentCodePointer);
 	}
 	public boolean step()
 	{
 		int executedInstrPointer = currentCodePointer ++;
+		codePointerHook(currentCodePointer);
 		if(executedInstrPointer < 0 || executedInstrPointer >= program.getLength())
 			throw new InterpreterException("Trying to execute out-of-bounds instruction: " + executedInstrPointer);
 		return exec(executedInstrPointer, program.getInstructionAt(executedInstrPointer));
@@ -68,10 +70,22 @@ public class AbstractMaMaInterpreter
 		}
 	}
 
+	public int getCurrentCodePointer()
+	{
+		return currentCodePointer;
+	}
+
 	/**
 	 * This hook is called just before an instruction is executed.<br>
 	 * The default implementation does nothing.
 	 */
 	protected void execHook(int executedInstrPointer, Instruction instruction)
+	{}
+
+	/**
+	 * This hook is called when the code pointer changes.<br>
+	 * The default implementation does nothing.
+	 */
+	protected void codePointerHook(int newCodePointer)
 	{}
 }

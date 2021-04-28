@@ -1,6 +1,6 @@
 package net.haspamelodica.mama.interpreter.visualizing.heap.objectelements;
 
-import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawReferenceArrow;
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawHeapReferenceArrow;
 
 import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObject;
@@ -21,7 +21,7 @@ public class HeapReferenceHOE implements DrawableHeapObjectElement
 	{
 		gc.setBackground(MaMaGUI.HEAP_REF_BG);
 		gc.fillRectangle(x, y, width, height);
-		drawReferenceArrow(gc, new Rectangle(x, y, width, height), referencedObject.getBounds());
+		drawHeapReferenceArrow(gc, new Rectangle(x, y, width, height), referencedObject.getBounds());
 	}
 
 	public VisualizingHeapObject getReferencedObject()

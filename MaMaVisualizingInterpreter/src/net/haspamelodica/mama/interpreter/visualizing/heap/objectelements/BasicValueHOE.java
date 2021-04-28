@@ -2,6 +2,7 @@ package net.haspamelodica.mama.interpreter.visualizing.heap.objectelements;
 
 import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawTextCentered;
 
+import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObject;
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
 
 public class BasicValueHOE implements DrawableHeapObjectElement
@@ -21,6 +22,8 @@ public class BasicValueHOE implements DrawableHeapObjectElement
 	@Override
 	public void draw(GeneralGC gc, double x, double y, double width, double height)
 	{
+		gc.setBackground(VisualizingHeapObject.DEFAULT_BG);
+		gc.fillRectangle(x, y, width, height);
 		drawTextCentered(gc, Integer.toString(value), x, y, width, height);
 	}
 }
