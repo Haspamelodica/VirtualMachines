@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -57,9 +58,15 @@ public class CodeGUI extends Canvas
 				swtgc.fillRectangle(0, y, WIDTH, ELEMENT_HEIGHT);
 			}
 			InstructionForDebugging instruction = instructions.get(i);
-			//TODO draw labels
-			//We could, but probably don't want to draw a line to the referenced code line
-			drawTextCentered(swtgc, instruction.toString(), LEFT_MARGIN, y, -1, ELEMENT_HEIGHT);
+			int iFinal = i;
+			String labelsString = program
+					.getLabels()
+					.stream()
+					.filter(l -> l.getTarget() == iFinal)
+					.map(l -> l.getName() + ":")
+					.collect(Collectors.joining(": "));
+			drawTextCentered(swtgc, i + ": " + labelsString + "\r" + instruction, LEFT_MARGIN, y, -1, ELEMENT_HEIGHT);
+			//If the immediate has a label argument, we could, but probably don't want to draw a line to the referenced code line
 			swtgc.drawLine(0, y, WIDTH, y);
 			y += ELEMENT_HEIGHT;
 		}
