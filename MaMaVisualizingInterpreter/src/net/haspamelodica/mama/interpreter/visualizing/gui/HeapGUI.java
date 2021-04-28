@@ -18,6 +18,7 @@ import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElemen
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
 import net.haspamelodica.swt.helper.gcs.SWTGC;
 import net.haspamelodica.swt.helper.swtobjectwrappers.Point;
+import net.haspamelodica.swt.helper.swtobjectwrappers.Rectangle;
 import net.haspamelodica.swt.helper.zoomablecanvas.ZoomableCanvas;
 import net.haspamelodica.swt.helper.zoomablecanvas.helper.ZoomableCanvasUserInput;
 
@@ -58,6 +59,12 @@ public class HeapGUI extends ZoomableCanvas
 	private void drawStackRefs(GC swtgc)
 	{
 		GeneralGC gc = new SWTGC(swtgc);
+		drawStackRefs(gc);
+		gc.disposeThisLayer();
+	}
+
+	public void drawStackRefs(GeneralGC gc)
+	{
 		Point stackOffset = new Point(getStackOffset.get());
 		List<StackElement> elements = stack.getElements();
 		for(int i = 0; i < elements.size(); i ++)
@@ -66,13 +73,12 @@ public class HeapGUI extends ZoomableCanvas
 			if(e.getType() == Type.HEAP_REFERENCE)
 			{
 				VisualizingHeapObject referencedObject = ((HeapReferenceSE) e).getReferencedObject();
-				Point referencedObjectPos = worldToCanvasCoords(referencedObject.getX(), referencedObject.getY());
+				Rectangle referencedObjectBounds = worldToCanvasCoords(referencedObject.getBounds());
 				drawReferenceArrow(gc,
-						referencedObjectPos.x, referencedObjectPos.y + referencedObject.getHeight() * getZoom() / 2,
-						stackOffset.x + StackGUI.WIDTH / 2d, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i + StackGUI.ELEMENT_HEIGHT / 2d);
+						new Rectangle(stackOffset.x, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i, StackGUI.WIDTH, StackGUI.ELEMENT_HEIGHT),
+						referencedObjectBounds);
 			}
 		}
-		gc.disposeThisLayer();
 	}
 
 	private void mouseDown(Event e)
@@ -102,6 +108,5 @@ public class HeapGUI extends ZoomableCanvas
 		Point mousePos = canvasToWorldCoords(e.x, e.y);
 		draggedObject.moveBy(mousePos.x - lastMousePos.x, mousePos.y - lastMousePos.y);
 		lastMousePos = mousePos;
-		redraw();
 	}
 }

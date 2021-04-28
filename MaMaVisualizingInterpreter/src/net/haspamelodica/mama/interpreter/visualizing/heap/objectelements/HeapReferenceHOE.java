@@ -5,6 +5,7 @@ import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawRe
 import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObject;
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
+import net.haspamelodica.swt.helper.swtobjectwrappers.Rectangle;
 
 public class HeapReferenceHOE implements DrawableHeapObjectElement
 {
@@ -20,7 +21,7 @@ public class HeapReferenceHOE implements DrawableHeapObjectElement
 	{
 		gc.setBackground(MaMaGUI.HEAP_REF_BG);
 		gc.fillRectangle(x, y, width, height);
-		drawReferenceArrow(gc, x + width / 2, y + height / 2, referencedObject.getX(), referencedObject.getY() + height / 2);
+		drawReferenceArrow(gc, new Rectangle(x, y, width, height), referencedObject.getBounds());
 	}
 
 	public VisualizingHeapObject getReferencedObject()

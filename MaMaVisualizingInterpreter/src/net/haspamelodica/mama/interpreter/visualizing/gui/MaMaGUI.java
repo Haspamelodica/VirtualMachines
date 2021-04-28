@@ -1,6 +1,6 @@
 package net.haspamelodica.mama.interpreter.visualizing.gui;
 
-import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.getOffset;
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.getClientAreaOffset;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -82,12 +82,16 @@ public class MaMaGUI
 	}
 	private void setupHeapGUI(VisualizingStack stack, VisualizingHeap heap)
 	{
-		heapGUI = new HeapGUI(shell, () -> getOffset(heapGUI, stackGUI, shell), stack, heap);
+		heapGUI = new HeapGUI(shell, () -> getClientAreaOffset(heapGUI, stackGUI, shell), stack, heap);
+		heapGUI.addTransformListener((x, y, z) -> display.asyncExec(stackGUI::redraw));
+		heapGUI.addTransformListener((x, y, z) -> display.asyncExec(codeGUI::redraw));
 	}
 
 	public void heapChanged()
 	{
 		display.asyncExec(heapGUI::redraw);
+		display.asyncExec(stackGUI::redraw);
+		display.asyncExec(codeGUI::redraw);
 	}
 
 	private void setupStackScroller(Composite parent, VisualizingStack stack)
@@ -96,8 +100,9 @@ public class MaMaGUI
 		stackScroller.setExpandVertical(true);
 		stackScroller.setAlwaysShowScrollBars(true);
 
-		stackGUI = new StackGUI(stackScroller, shell, stack);
+		stackGUI = new StackGUI(stackScroller, () -> getClientAreaOffset(stackGUI, heapGUI, shell), heapGUI::drawStackRefs, stack);
 		stackGUI.addListener(SWT.Move, e -> heapGUI.redraw());
+		stackScroller.addListener(SWT.Move, e -> stackGUI.redraw());
 
 		stackScroller.setContent(stackGUI);
 	}
@@ -105,6 +110,7 @@ public class MaMaGUI
 	{
 		display.asyncExec(() -> stackScroller.setMinHeight(stackGUI.getHeight()));
 		display.asyncExec(stackGUI::redraw);
+		display.asyncExec(heapGUI::redraw);
 	}
 	private void setupButtonStep(Composite parent)
 	{

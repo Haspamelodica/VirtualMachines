@@ -6,14 +6,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
+import net.haspamelodica.swt.helper.swtobjectwrappers.Rectangle;
 
 public class GUIUtils
 {
-	public static void drawReferenceArrow(GeneralGC gc, double xFrom, double yFrom, double xTo, double yTo)
+	public static void drawReferenceArrow(GeneralGC gc, Rectangle from, Rectangle to)
 	{
 		//TODO
 		gc.setLineWidth(0);
-		gc.drawLine(xFrom, yFrom, xTo, yTo);
+		gc.drawLine(from.x + from.width / 2, from.y + from.height / 2, to.x, to.y + to.height / 2);
 		gc.setLineWidth(1);
 	}
 
@@ -28,17 +29,19 @@ public class GUIUtils
 		gc.drawText(text, x + (width - textExtent.x) / 2, y + (height - textExtent.y) / 2, true);
 	}
 
-	public static Point getOffset(Control from, Control to, Composite commonParent)
+	public static Point getClientAreaOffset(Composite from, Composite to, Composite commonParent)
 	{
-		Point fromLoc = getPositionInParent(from, commonParent);
-		Point toLoc = getPositionInParent(to, commonParent);
+		Point fromLoc = getPositionInParentIncludingClientArea(from, commonParent);
+		Point toLoc = getPositionInParentIncludingClientArea(to, commonParent);
 		toLoc.x -= fromLoc.x;
 		toLoc.y -= fromLoc.y;
 		return toLoc;
 	}
-	public static Point getPositionInParent(Control control, Composite parent)
+	public static Point getPositionInParentIncludingClientArea(Composite control, Composite parent)
 	{
-		Point result = new Point(0, 0);
+		org.eclipse.swt.graphics.Rectangle clientArea = control.getClientArea();
+		int borderWidth = control.getBorderWidth();
+		Point result = new Point(clientArea.x + borderWidth, clientArea.y + borderWidth);
 		for(Control c = control; c != parent; c = c.getParent())
 		{
 			Point location = c.getLocation();

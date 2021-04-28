@@ -48,7 +48,7 @@ public class VisualizingHeap implements Heap
 	@Override
 	public HeapObject createObject(HeapObjectContent content)
 	{
-		VisualizingHeapObject newObject = new VisualizingHeapObject(content, 0, nextY += HEAP_OBJECT_DISTANCE);
+		VisualizingHeapObject newObject = new VisualizingHeapObject(content, 0, nextY += HEAP_OBJECT_DISTANCE, observer);
 		heapObjectsM.add(newObject);
 		observer.run();
 		return newObject;

@@ -19,11 +19,14 @@ public class VisualizingHeapObject implements HeapObject
 
 	private VisualizingHeapObjectContent content;
 
-	public VisualizingHeapObject(HeapObjectContent content, double x, double y)
+	private final Runnable positionObserver;
+
+	public VisualizingHeapObject(HeapObjectContent content, double x, double y, Runnable positionObserver)
 	{
 		setContent(content);
 		this.x = x;
 		this.y = y;
+		this.positionObserver = positionObserver;
 	}
 
 	public void draw(GeneralGC gc)
@@ -69,6 +72,7 @@ public class VisualizingHeapObject implements HeapObject
 	{
 		this.x += x;
 		this.y += y;
+		positionObserver.run();
 	}
 
 	@Override
