@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
 import net.haspamelodica.mama.interpreter.heap.Vector;
 import net.haspamelodica.mama.interpreter.visualizing.heap.objectelements.BasicValueHOE;
 import net.haspamelodica.mama.interpreter.visualizing.heap.objectelements.DrawableHeapObjectElement;
@@ -12,11 +12,10 @@ import net.haspamelodica.mama.interpreter.visualizing.heap.objectelements.HeapRe
 
 public class VisualizingVector extends VisualizingHeapObjectContent implements Vector
 {
-	private final List<HeapObjectRef> referencedObjects;
+	private final List<HeapObject> referencedObjects;
 
-	public VisualizingVector(List<HeapObjectRef> referencedObjects, double x, double y)
+	public VisualizingVector(List<HeapObject> referencedObjects)
 	{
-		super(x, y);
 		this.referencedObjects = List.copyOf(referencedObjects);
 	}
 
@@ -26,7 +25,7 @@ public class VisualizingVector extends VisualizingHeapObjectContent implements V
 		return referencedObjects.size();
 	}
 	@Override
-	public HeapObjectRef get(int i)
+	public HeapObject get(int i)
 	{
 		return referencedObjects.get(i);
 	}
@@ -36,9 +35,8 @@ public class VisualizingVector extends VisualizingHeapObjectContent implements V
 	{
 		return Stream.concat(Stream.of(new BasicValueHOE(referencedObjects.size())), referencedObjects
 				.stream()
-				.map(HeapObjectRef::getContent)
 				//TODO can we do this cleaner?
-				.map(c -> (VisualizingHeapObjectContent) c)
+				.map(c -> (VisualizingHeapObject) c)
 				.map(HeapReferenceHOE::new))
 				.collect(Collectors.toList());
 	}

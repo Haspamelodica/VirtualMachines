@@ -1,12 +1,12 @@
 package net.haspamelodica.mama.interpreter.stack;
 
-import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
 
 public interface Stack
 {
 	public void clear();
 	public void pushBasic(int value);
-	public void pushHeapReference(HeapObjectRef referencedObject);
+	public void pushHeapReference(HeapObject referencedObject);
 	public int popBasic();
-	public HeapObjectRef popHeapReference();
+	public HeapObject popHeapReference();
 }

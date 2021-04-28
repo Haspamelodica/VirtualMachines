@@ -1,14 +1,16 @@
 package net.haspamelodica.mama.interpreter.visualizing.heap.objectelements;
 
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawReferenceArrow;
+
 import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
-import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObjectContent;
+import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObject;
 import net.haspamelodica.swt.helper.gcs.GeneralGC;
 
 public class HeapReferenceHOE implements DrawableHeapObjectElement
 {
-	private final VisualizingHeapObjectContent referencedObject;
+	private final VisualizingHeapObject referencedObject;
 
-	public HeapReferenceHOE(VisualizingHeapObjectContent referencedObject)
+	public HeapReferenceHOE(VisualizingHeapObject referencedObject)
 	{
 		this.referencedObject = referencedObject;
 	}
@@ -18,11 +20,10 @@ public class HeapReferenceHOE implements DrawableHeapObjectElement
 	{
 		gc.setBackground(MaMaGUI.HEAP_REF_BG);
 		gc.fillRectangle(x, y, width, height);
-		//TODO let this look more like an arrow
-		gc.drawLine(x + width / 2, y + height / 2, referencedObject.getX(), referencedObject.getY() + height / 2);
+		drawReferenceArrow(gc, x + width / 2, y + height / 2, referencedObject.getX(), referencedObject.getY() + height / 2);
 	}
 
-	public VisualizingHeapObjectContent getReferencedObject()
+	public VisualizingHeapObject getReferencedObject()
 	{
 		return referencedObject;
 	}

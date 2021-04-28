@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.haspamelodica.mama.interpreter.exceptions.StackException;
-import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
 import net.haspamelodica.mama.interpreter.stack.Stack;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.BasicValueSE;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.HeapReferenceSE;
@@ -39,7 +39,7 @@ public class VisualizingStack implements Stack
 		push(new BasicValueSE(value));
 	}
 	@Override
-	public void pushHeapReference(HeapObjectRef referencedObject)
+	public void pushHeapReference(HeapObject referencedObject)
 	{
 		push(new HeapReferenceSE(referencedObject));
 	}
@@ -49,7 +49,7 @@ public class VisualizingStack implements Stack
 		return pop().checkBasicValue().getValue();
 	}
 	@Override
-	public HeapObjectRef popHeapReference()
+	public HeapObject popHeapReference()
 	{
 		return pop().checkHeapReference().getReferencedObject();
 	}

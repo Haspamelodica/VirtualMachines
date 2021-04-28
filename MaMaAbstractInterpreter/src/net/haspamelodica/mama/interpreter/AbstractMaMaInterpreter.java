@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.haspamelodica.mama.interpreter.exceptions.InterpreterException;
 import net.haspamelodica.mama.interpreter.heap.Heap;
-import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
 import net.haspamelodica.mama.interpreter.stack.Stack;
 import net.haspamelodica.mama.model.Instruction;
 import net.haspamelodica.mama.model.MaMaProgram;
@@ -58,7 +58,7 @@ public class AbstractMaMaInterpreter
 				stack.pushHeapReference(heap.createBasic(stack.popBasic()));
 				return true;
 			case mkvec:
-				HeapObjectRef[] referencedObjects = new HeapObjectRef[instruction.getImmediate()];
+				HeapObject[] referencedObjects = new HeapObject[instruction.getImmediate()];
 				for(int i = instruction.getImmediate() - 1; i >= 0; i --)
 					referencedObjects[i] = stack.popHeapReference();
 				stack.pushHeapReference(heap.createVector(List.of(referencedObjects)));

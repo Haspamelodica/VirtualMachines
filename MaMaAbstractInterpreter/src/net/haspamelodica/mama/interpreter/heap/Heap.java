@@ -6,13 +6,14 @@ public interface Heap
 {
 	public void clear();
 	public BasicValue createBasicContent(int value);
-	public Vector createVectorContent(List<HeapObjectRef> referencedObjects);
-	public default HeapObjectRef createBasic(int value)
+	public Vector createVectorContent(List<HeapObject> referencedObjects);
+	public HeapObject createObject(HeapObjectContent content);
+	public default HeapObject createBasic(int value)
 	{
-		return new HeapObjectRef(createBasicContent(value));
+		return createObject(createBasicContent(value));
 	}
-	public default HeapObjectRef createVector(List<HeapObjectRef> referencedObjects)
+	public default HeapObject createVector(List<HeapObject> referencedObjects)
 	{
-		return new HeapObjectRef(createVectorContent(referencedObjects));
+		return createObject(createVectorContent(referencedObjects));
 	}
 }

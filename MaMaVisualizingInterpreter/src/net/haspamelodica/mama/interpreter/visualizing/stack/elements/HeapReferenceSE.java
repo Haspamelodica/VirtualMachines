@@ -2,19 +2,21 @@ package net.haspamelodica.mama.interpreter.visualizing.stack.elements;
 
 import org.eclipse.swt.graphics.GC;
 
-import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
 import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
+import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObject;
 
 public class HeapReferenceSE implements StackElement
 {
-	private final HeapObjectRef referencedObject;
+	private final VisualizingHeapObject referencedObject;
 
-	public HeapReferenceSE(HeapObjectRef referencedObject)
+	public HeapReferenceSE(HeapObject referencedObject)
 	{
-		this.referencedObject = referencedObject;
+		//TODO can we do this cleaner?
+		this.referencedObject = (VisualizingHeapObject) referencedObject;
 	}
 
-	public HeapObjectRef getReferencedObject()
+	public VisualizingHeapObject getReferencedObject()
 	{
 		return referencedObject;
 	}

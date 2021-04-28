@@ -6,15 +6,16 @@ import java.util.List;
 
 import net.haspamelodica.mama.interpreter.heap.BasicValue;
 import net.haspamelodica.mama.interpreter.heap.Heap;
-import net.haspamelodica.mama.interpreter.heap.HeapObjectRef;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
+import net.haspamelodica.mama.interpreter.heap.HeapObjectContent;
 import net.haspamelodica.mama.interpreter.heap.Vector;
 
 public class VisualizingHeap implements Heap
 {
 	private static final int HEAP_OBJECT_DISTANCE = 50;
 
-	private final List<VisualizingHeapObjectContent>	heapObjectsM;
-	private final List<VisualizingHeapObjectContent>	heapObjectsU;
+	private final List<VisualizingHeapObject>	heapObjectsM;
+	private final List<VisualizingHeapObject>	heapObjectsU;
 
 	private final Runnable observer;
 
@@ -37,21 +38,23 @@ public class VisualizingHeap implements Heap
 	@Override
 	public BasicValue createBasicContent(int value)
 	{
-		VisualizingBasicValue newObject = new VisualizingBasicValue(value, 0, nextY += HEAP_OBJECT_DISTANCE);
-		heapObjectsM.add(newObject);
-		observer.run();
-		return newObject;
+		return new VisualizingBasicValue(value);
 	}
 	@Override
-	public Vector createVectorContent(List<HeapObjectRef> referencedObjects)
+	public Vector createVectorContent(List<HeapObject> referencedObjects)
 	{
-		VisualizingVector newObject = new VisualizingVector(referencedObjects, 0, nextY += HEAP_OBJECT_DISTANCE);
+		return new VisualizingVector(referencedObjects);
+	}
+	@Override
+	public HeapObject createObject(HeapObjectContent content)
+	{
+		VisualizingHeapObject newObject = new VisualizingHeapObject(content, 0, nextY += HEAP_OBJECT_DISTANCE);
 		heapObjectsM.add(newObject);
 		observer.run();
 		return newObject;
 	}
 
-	public List<VisualizingHeapObjectContent> getHeapObjects()
+	public List<VisualizingHeapObject> getHeapObjects()
 	{
 		return heapObjectsU;
 	}

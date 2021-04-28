@@ -1,5 +1,6 @@
 package net.haspamelodica.mama.interpreter.visualizing.gui;
 
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.*;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -9,7 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeap;
-import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObjectContent;
+import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeapObject;
 import net.haspamelodica.mama.interpreter.visualizing.stack.VisualizingStack;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.HeapReferenceSE;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElement;
@@ -27,8 +28,8 @@ public class HeapGUI extends ZoomableCanvas
 
 	private final Supplier<org.eclipse.swt.graphics.Point> getStackOffset;
 
-	private Point							lastMousePos;
-	private VisualizingHeapObjectContent	draggedObject;
+	private Point					lastMousePos;
+	private VisualizingHeapObject	draggedObject;
 
 	public HeapGUI(Composite parent, Supplier<org.eclipse.swt.graphics.Point> getStackOffset, VisualizingStack stack, VisualizingHeap heap)
 	{
@@ -50,7 +51,7 @@ public class HeapGUI extends ZoomableCanvas
 	private void draw(GeneralGC gc)
 	{
 		gc.setLineWidth(0.5);
-		for(VisualizingHeapObjectContent heapObject : heap.getHeapObjects())
+		for(VisualizingHeapObject heapObject : heap.getHeapObjects())
 			heapObject.draw(gc);
 	}
 
@@ -64,9 +65,11 @@ public class HeapGUI extends ZoomableCanvas
 			StackElement e = elements.get(i);
 			if(e.getType() == Type.HEAP_REFERENCE)
 			{
-				VisualizingHeapObjectContent referencedObject = (VisualizingHeapObjectContent) ((HeapReferenceSE) e).getReferencedObject().getContent();
-				Point origin = worldToCanvasCoords(referencedObject.getX(), referencedObject.getY());
-				gc.drawLine(origin.x, origin.y, stackOffset.x + StackGUI.WIDTH / 2d, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i + StackGUI.ELEMENT_HEIGHT / 2d);
+				VisualizingHeapObject referencedObject = ((HeapReferenceSE) e).getReferencedObject();
+				Point referencedObjectPos = worldToCanvasCoords(referencedObject.getX(), referencedObject.getY());
+				drawReferenceArrow(gc,
+						referencedObjectPos.x, referencedObjectPos.y + referencedObject.getHeight() * getZoom() / 2,
+						stackOffset.x + StackGUI.WIDTH / 2d, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i + StackGUI.ELEMENT_HEIGHT / 2d);
 			}
 		}
 		gc.disposeThisLayer();
@@ -78,7 +81,7 @@ public class HeapGUI extends ZoomableCanvas
 			return;
 
 		Point mousePos = canvasToWorldCoords(e.x, e.y);
-		for(VisualizingHeapObjectContent heapObject : heap.getHeapObjects())
+		for(VisualizingHeapObject heapObject : heap.getHeapObjects())
 			if(heapObject.getBounds().contains(mousePos))
 				//don't break loop to pick the last / highest one
 				draggedObject = heapObject;

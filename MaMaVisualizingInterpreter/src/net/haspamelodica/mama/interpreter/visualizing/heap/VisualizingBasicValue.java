@@ -10,9 +10,8 @@ public class VisualizingBasicValue extends VisualizingHeapObjectContent implemen
 {
 	private final int value;
 
-	public VisualizingBasicValue(int value, double x, double y)
+	public VisualizingBasicValue(int value)
 	{
-		super(x, y);
 		this.value = value;
 	}
 
