@@ -46,7 +46,7 @@ public class MaMaParser
 
 				String label = line.substring(0, indexOfColon).stripTrailing();//line already is stripped of leading whitespace
 				labels.put(label, new DebuggingLabel(label, instructions.size()));
-				line = line.substring(indexOfColon + 1);
+				line = line.substring(indexOfColon + 1).stripLeading();
 			}
 
 			if(line.isEmpty())
