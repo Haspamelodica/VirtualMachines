@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeap;
 import net.haspamelodica.mama.interpreter.visualizing.stack.VisualizingStack;
-import net.haspamelodica.mama.model.MaMaProgram;
+import net.haspamelodica.mama.model.debugging.MaMaProgramForDebugging;
 
 public class MaMaGUI
 {
@@ -40,10 +40,11 @@ public class MaMaGUI
 	private ScrolledComposite	stackScroller;
 	private StackGUI			stackGUI;
 
-	public MaMaGUI(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap, IntSupplier getCurrentCodePointer, GUICallback callback)
+	public MaMaGUI(MaMaProgramForDebugging program, VisualizingStack stack, VisualizingHeap heap, IntSupplier getCurrentCodePointer,
+			GUICallback callback)
 	{
 		this.callback = callback;
-		this.display = new Display();
+		this.display = Display.getCurrent() != null ? Display.getCurrent() : new Display();
 
 		setupShell(program, stack, heap, getCurrentCodePointer);
 	}
@@ -57,7 +58,7 @@ public class MaMaGUI
 		display.dispose();
 	}
 
-	private void setupShell(MaMaProgram program, VisualizingStack stack, VisualizingHeap heap, IntSupplier getCurrentCodePointer)
+	private void setupShell(MaMaProgramForDebugging program, VisualizingStack stack, VisualizingHeap heap, IntSupplier getCurrentCodePointer)
 	{
 		shell = new Shell();
 		shell.setText("MaMa visualizer");
@@ -74,7 +75,7 @@ public class MaMaGUI
 		stackScroller.setLayoutData(formData(null, fa(), fa(100), fa(100)));
 	}
 
-	private void setupCodeScroller(Composite parent, MaMaProgram program, IntSupplier getCurrentCodePointer)
+	private void setupCodeScroller(Composite parent, MaMaProgramForDebugging program, IntSupplier getCurrentCodePointer)
 	{
 		codeScroller = new ScrolledComposite(parent, SWT.VERTICAL);
 		codeScroller.setExpandVertical(true);

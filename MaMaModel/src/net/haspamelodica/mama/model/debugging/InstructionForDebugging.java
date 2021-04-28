@@ -22,6 +22,16 @@ public class InstructionForDebugging extends Instruction
 		super(opcode, labelArgument.getTarget());
 		this.labelArgument = labelArgument;
 	}
+	public static InstructionForDebugging fromInstruction(Instruction instruction)
+	{
+		if(instruction instanceof InstructionForDebugging)
+			return (InstructionForDebugging) instruction;
+
+		if(instruction.getOpcode().hasImmediate())
+			return new InstructionForDebugging(instruction.getOpcode(), instruction.getImmediate());
+		else
+			return new InstructionForDebugging(instruction.getOpcode());
+	}
 
 	public boolean hasLabelArgument()
 	{

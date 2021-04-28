@@ -1,0 +1,17 @@
+//create 3 basic heap values
+
+loadc 123
+mkbasic
+
+loadc 456
+mkbasic
+
+loadc 789
+mkbasic
+
+A:
+mkvec 3 //3 values on stack
+
+mkfunval A
+
+mkfunval 1

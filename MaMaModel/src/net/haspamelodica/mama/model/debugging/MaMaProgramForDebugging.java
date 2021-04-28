@@ -2,6 +2,7 @@ package net.haspamelodica.mama.model.debugging;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.haspamelodica.mama.model.MaMaProgram;
 
@@ -17,6 +18,18 @@ public class MaMaProgramForDebugging extends MaMaProgram
 		//yes, if instructions changes while this executes, problems will arise. That is not a big problem.
 		this.instructionsForDebugging = List.copyOf(instructions);
 		this.labels = Set.copyOf(labels);
+	}
+	public static MaMaProgramForDebugging fromMaMaProgram(MaMaProgram program)
+	{
+		if(program instanceof MaMaProgramForDebugging)
+			return (MaMaProgramForDebugging) program;
+
+		List<InstructionForDebugging> debuggingInstructions = program
+				.getInstructions()
+				.stream()
+				.map(InstructionForDebugging::fromInstruction)
+				.collect(Collectors.toList());
+		return new MaMaProgramForDebugging(debuggingInstructions, Set.of());
 	}
 
 	public List<InstructionForDebugging> getInstructionsForDebugging()

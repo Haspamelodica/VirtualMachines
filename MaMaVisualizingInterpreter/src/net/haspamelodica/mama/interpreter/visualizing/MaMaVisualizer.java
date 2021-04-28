@@ -6,6 +6,7 @@ import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeap;
 import net.haspamelodica.mama.interpreter.visualizing.stack.VisualizingStack;
 import net.haspamelodica.mama.model.MaMaProgram;
+import net.haspamelodica.mama.model.debugging.MaMaProgramForDebugging;
 
 public class MaMaVisualizer
 {
@@ -16,6 +17,10 @@ public class MaMaVisualizer
 	private final MaMaGUI gui;
 
 	public MaMaVisualizer(MaMaProgram program)
+	{
+		this(MaMaProgramForDebugging.fromMaMaProgram(program));
+	}
+	public MaMaVisualizer(MaMaProgramForDebugging program)
 	{
 		this.stack = new VisualizingStack(this::stackChanged);
 		this.heap = new VisualizingHeap(this::heapChanged);
