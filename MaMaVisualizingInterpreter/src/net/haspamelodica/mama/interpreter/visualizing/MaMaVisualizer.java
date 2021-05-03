@@ -32,7 +32,7 @@ public class MaMaVisualizer
 				gui.codePointerChanged();
 			}
 		};
-		this.gui = new MaMaGUI(program, stack, heap, interpreter::getCurrentCodePointer, new GUICallback()
+		this.gui = new MaMaGUI(program, stack, heap, interpreter::getCodePointer, new GUICallback()
 		{
 			@Override
 			public void step()

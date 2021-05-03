@@ -15,7 +15,7 @@ public class AbstractMaMaInterpreter
 
 	private final Stack	stack;
 	private final Heap	heap;
-	private int			currentCodePointer;
+	private int			codePointer;
 
 	protected AbstractMaMaInterpreter(MaMaProgram program, Stack stack, Heap heap)
 	{
@@ -33,13 +33,13 @@ public class AbstractMaMaInterpreter
 	{
 		stack.clear();
 		heap.clear();
-		currentCodePointer = 0;
-		codePointerHook(currentCodePointer);
+		codePointer = 0;
+		codePointerHook(codePointer);
 	}
 	public boolean step()
 	{
-		int executedInstrPointer = currentCodePointer ++;
-		codePointerHook(currentCodePointer);
+		int executedInstrPointer = codePointer ++;
+		codePointerHook(codePointer);
 		if(executedInstrPointer < 0 || executedInstrPointer >= program.getLength())
 			throw new InterpreterException("Trying to execute out-of-bounds instruction: " + executedInstrPointer);
 		return exec(executedInstrPointer, program.getInstructionAt(executedInstrPointer));
@@ -73,9 +73,9 @@ public class AbstractMaMaInterpreter
 		}
 	}
 
-	public int getCurrentCodePointer()
+	public int getCodePointer()
 	{
-		return currentCodePointer;
+		return codePointer;
 	}
 
 	/**
