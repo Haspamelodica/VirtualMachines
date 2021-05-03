@@ -9,4 +9,6 @@ public interface Stack
 	public void pushHeapReference(HeapObject referencedObject);
 	public int popBasic();
 	public HeapObject popHeapReference();
+	public void popMultiple(int numberOfValuesToPop);
+	public HeapObject getHeapReferenceRelative(int offsetFromStackPointer);
 }

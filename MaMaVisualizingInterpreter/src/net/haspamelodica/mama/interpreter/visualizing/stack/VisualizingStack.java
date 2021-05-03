@@ -1,7 +1,6 @@
 package net.haspamelodica.mama.interpreter.visualizing.stack;
 
 import java.util.Collections;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,8 +13,8 @@ import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElemen
 
 public class VisualizingStack implements Stack
 {
-	private final Deque<StackElement>	elementsM;
-	private final List<StackElement>	elementsU;
+	private final LinkedList<StackElement>	elementsM;
+	private final List<StackElement>		elementsU;
 
 	private final Runnable observer;
 
@@ -53,6 +52,12 @@ public class VisualizingStack implements Stack
 	{
 		return pop().checkHeapReference().getReferencedObject();
 	}
+	@Override
+	public HeapObject getHeapReferenceRelative(int offsetFromStackPointer)
+	{
+		return getRelative(offsetFromStackPointer).checkHeapReference().getReferencedObject();
+	}
+
 
 	public List<StackElement> getElements()
 	{
@@ -71,5 +76,23 @@ public class VisualizingStack implements Stack
 		StackElement popped = elementsM.pop();
 		observer.run();
 		return popped;
+	}
+	private StackElement getRelative(int offsetFromStackPointer)
+	{
+		if(offsetFromStackPointer < 0 || offsetFromStackPointer >= elementsM.size())
+			throw new StackException("Offset out of bounds: " + offsetFromStackPointer);
+		//pop and push operate on the first element
+		return elementsM.get(offsetFromStackPointer);
+	}
+	@Override
+	public void popMultiple(int numberOfValuesToPop)
+	{
+		//pop and push operate on the first element
+		if(numberOfValuesToPop < 0)
+			throw new StackException("Popping a negative amount of values: " + numberOfValuesToPop);
+		else if(numberOfValuesToPop > elementsM.size())
+			throw new StackException("Popping more values than are on the stack: " + numberOfValuesToPop);
+		elementsM.subList(0, numberOfValuesToPop).clear();
+		observer.run();
 	}
 }
