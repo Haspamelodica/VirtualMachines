@@ -16,6 +16,7 @@ public class AbstractMaMaInterpreter
 	private final Stack	stack;
 	private final Heap	heap;
 	private int			codePointer;
+	private HeapObject	globalPointer;
 
 	protected AbstractMaMaInterpreter(MaMaProgram program, Stack stack, Heap heap)
 	{
@@ -35,6 +36,8 @@ public class AbstractMaMaInterpreter
 		heap.clear();
 		codePointer = 0;
 		codePointerHook(codePointer);
+		globalPointer = null;
+		globalPointerHook(globalPointer);
 	}
 	public boolean step()
 	{
@@ -77,6 +80,10 @@ public class AbstractMaMaInterpreter
 	{
 		return codePointer;
 	}
+	public HeapObject getGlobalPointer()
+	{
+		return globalPointer;
+	}
 
 	/**
 	 * This hook is called just before an instruction is executed.<br>
@@ -90,5 +97,12 @@ public class AbstractMaMaInterpreter
 	 * The default implementation does nothing.
 	 */
 	protected void codePointerHook(int newCodePointer)
+	{}
+
+	/**
+	 * This hook is called when the global pointer changes.<br>
+	 * The default implementation does nothing.
+	 */
+	protected void globalPointerHook(HeapObject newGlobalPointer)
 	{}
 }

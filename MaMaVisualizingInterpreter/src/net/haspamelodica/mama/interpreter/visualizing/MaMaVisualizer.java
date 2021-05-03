@@ -1,6 +1,7 @@
 package net.haspamelodica.mama.interpreter.visualizing;
 
 import net.haspamelodica.mama.interpreter.AbstractMaMaInterpreter;
+import net.haspamelodica.mama.interpreter.heap.HeapObject;
 import net.haspamelodica.mama.interpreter.visualizing.gui.GUICallback;
 import net.haspamelodica.mama.interpreter.visualizing.gui.MaMaGUI;
 import net.haspamelodica.mama.interpreter.visualizing.heap.VisualizingHeap;
@@ -30,6 +31,11 @@ public class MaMaVisualizer
 			protected void codePointerHook(int newCodePointer)
 			{
 				gui.codePointerChanged();
+			}
+			@Override
+			protected void globalPointerHook(HeapObject newGlobalPointer)
+			{
+				//TODO visualize global pointer
 			}
 		};
 		this.gui = new MaMaGUI(program, stack, heap, interpreter::getCodePointer, new GUICallback()
