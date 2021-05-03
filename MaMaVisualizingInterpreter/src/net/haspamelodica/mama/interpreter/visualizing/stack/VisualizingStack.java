@@ -77,6 +77,11 @@ public class VisualizingStack implements Stack
 		observer.run();
 		return popped;
 	}
+	@Override
+	public int getStackPointer()
+	{
+		return elementsM.size() - 1;
+	}
 	private StackElement getRelative(int offsetFromStackPointer)
 	{
 		if(offsetFromStackPointer < 0 || offsetFromStackPointer >= elementsM.size())
