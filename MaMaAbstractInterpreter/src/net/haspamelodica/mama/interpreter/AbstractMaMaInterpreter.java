@@ -83,9 +83,9 @@ public class AbstractMaMaInterpreter
 				return true;
 			case apply:
 				Function calledFunction = stack.popHeapReference().checkFunction();
-				setGlobalPointer(calledFunction.getGp());
+				setGlobalPointer(calledFunction.getGlobalPointer());
 				setCodePointer(calledFunction.getCodePointer());
-				Vector arguments = calledFunction.getArguments().checkVector();
+				Vector arguments = calledFunction.getArgumentPointer().checkVector();
 				for(int i = 0; i < arguments.getLength(); i ++)
 					stack.pushHeapReference(arguments.get(i));
 				return true;

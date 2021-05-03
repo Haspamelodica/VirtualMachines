@@ -11,15 +11,15 @@ import net.haspamelodica.mama.interpreter.visualizing.heap.objectelements.HeapRe
 public class VisualizingFunction extends VisualizingHeapObjectContent implements Function
 {
 	private final int					codePointer;
-	private final VisualizingHeapObject	arguments;
-	private final VisualizingHeapObject	gp;
+	private final VisualizingHeapObject	argumentPointer;
+	private final VisualizingHeapObject	globalPointer;
 
-	public VisualizingFunction(int codePointer, HeapObject arguments, HeapObject gp)
+	public VisualizingFunction(int codePointer, HeapObject argumentPointer, HeapObject globalPointer)
 	{
 		this.codePointer = codePointer;
 		//TODO can we do this cleaner?
-		this.arguments = (VisualizingHeapObject) arguments;
-		this.gp = (VisualizingHeapObject) gp;
+		this.argumentPointer = (VisualizingHeapObject) argumentPointer;
+		this.globalPointer = (VisualizingHeapObject) globalPointer;
 	}
 
 	@Override
@@ -28,20 +28,20 @@ public class VisualizingFunction extends VisualizingHeapObjectContent implements
 		return codePointer;
 	}
 	@Override
-	public VisualizingHeapObject getArguments()
+	public VisualizingHeapObject getArgumentPointer()
 	{
-		return arguments;
+		return argumentPointer;
 	}
 	@Override
-	public VisualizingHeapObject getGp()
+	public VisualizingHeapObject getGlobalPointer()
 	{
-		return gp;
+		return globalPointer;
 	}
 
 	@Override
 	protected List<DrawableHeapObjectElement> getElements()
 	{
-		return List.of(new CodePointerHOE(codePointer), new HeapReferenceHOE(arguments), new HeapReferenceHOE(gp));
+		return List.of(new CodePointerHOE(codePointer), new HeapReferenceHOE(argumentPointer), new HeapReferenceHOE(globalPointer));
 	}
 	@Override
 	protected int getElementCount()

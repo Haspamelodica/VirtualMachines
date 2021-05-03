@@ -3,7 +3,7 @@ package net.haspamelodica.mama.interpreter.heap;
 public interface Closure extends HeapObjectContent
 {
 	public int getCodePointer();
-	public HeapObject getGp();
+	public HeapObject getGlobalPointer();
 
 	@Override
 	public default Tag getTag()

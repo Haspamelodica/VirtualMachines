@@ -47,9 +47,9 @@ public class VisualizingHeap implements Heap
 		return new VisualizingVector(referencedObjects);
 	}
 	@Override
-	public Function createFunctionContent(int codePointer, HeapObject arguments, HeapObject gp)
+	public Function createFunctionContent(int codePointer, HeapObject arguments, HeapObject globalPointer)
 	{
-		return new VisualizingFunction(codePointer, arguments, gp);
+		return new VisualizingFunction(codePointer, arguments, globalPointer);
 	}
 	@Override
 	public HeapObject createObject(HeapObjectContent content)

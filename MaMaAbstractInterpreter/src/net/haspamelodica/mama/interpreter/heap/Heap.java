@@ -7,7 +7,7 @@ public interface Heap
 	public void clear();
 	public BasicValue createBasicContent(int value);
 	public Vector createVectorContent(List<HeapObject> referencedObjects);
-	public Function createFunctionContent(int codePointer, HeapObject arguments, HeapObject gp);
+	public Function createFunctionContent(int codePointer, HeapObject arguments, HeapObject globalPointer);
 	public HeapObject createObject(HeapObjectContent content);
 	public default HeapObject createBasic(int value)
 	{
@@ -17,8 +17,8 @@ public interface Heap
 	{
 		return createObject(createVectorContent(referencedObjects));
 	}
-	public default HeapObject createFunction(int codePointer, HeapObject arguments, HeapObject gp)
+	public default HeapObject createFunction(int codePointer, HeapObject arguments, HeapObject globalPointer)
 	{
-		return createObject(createFunctionContent(codePointer, arguments, gp));
+		return createObject(createFunctionContent(codePointer, arguments, globalPointer));
 	}
 }
