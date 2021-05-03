@@ -16,6 +16,7 @@ public class AbstractMaMaInterpreter
 	private final Stack	stack;
 	private final Heap	heap;
 	private int			codePointer;
+	private int			framePointer;
 	private HeapObject	globalPointer;
 
 	protected AbstractMaMaInterpreter(MaMaProgram program, Stack stack, Heap heap)
@@ -34,15 +35,14 @@ public class AbstractMaMaInterpreter
 	{
 		stack.clear();
 		heap.clear();
-		codePointer = 0;
-		codePointerHook(codePointer);
-		globalPointer = null;
-		globalPointerHook(globalPointer);
+		setCodePointer(0);
+		setGlobalPointer(null);
 	}
+
 	public boolean step()
 	{
-		int executedInstrPointer = codePointer ++;
-		codePointerHook(codePointer);
+		int executedInstrPointer = getCodePointer();
+		setCodePointer(executedInstrPointer + 1);
 		if(executedInstrPointer < 0 || executedInstrPointer >= program.getLength())
 			throw new InterpreterException("Trying to execute out-of-bounds instruction: " + executedInstrPointer);
 		return exec(executedInstrPointer, program.getInstructionAt(executedInstrPointer));
@@ -66,7 +66,7 @@ public class AbstractMaMaInterpreter
 				stack.pushHeapReference(stack.getHeapReferenceRelative(instruction.getImmediate()));
 				return true;
 			case pushglob:
-				stack.pushHeapReference(globalPointer.checkVector().get(instruction.getImmediate()));
+				stack.pushHeapReference(getGlobalPointer().checkVector().get(instruction.getImmediate()));
 				return true;
 			case slide:
 				HeapObject remainingValue = stack.popHeapReference();
@@ -97,9 +97,28 @@ public class AbstractMaMaInterpreter
 	{
 		return codePointer;
 	}
+	public void setCodePointer(int codePointer)
+	{
+		this.codePointer = codePointer;
+		codePointerHook(codePointer);
+	}
+	public int getFramePointer()
+	{
+		return framePointer;
+	}
+	public void setFramePointer(int framePointer)
+	{
+		this.framePointer = framePointer;
+		framePointerHook(framePointer);
+	}
 	public HeapObject getGlobalPointer()
 	{
 		return globalPointer;
+	}
+	public void setGlobalPointer(HeapObject globalPointer)
+	{
+		this.globalPointer = globalPointer;
+		globalPointerHook(globalPointer);
 	}
 
 	/**
@@ -114,6 +133,13 @@ public class AbstractMaMaInterpreter
 	 * The default implementation does nothing.
 	 */
 	protected void codePointerHook(int newCodePointer)
+	{}
+
+	/**
+	 * This hook is called when the frame pointer changes.<br>
+	 * The default implementation does nothing.
+	 */
+	protected void framePointerHook(int newFramePointer)
 	{}
 
 	/**
