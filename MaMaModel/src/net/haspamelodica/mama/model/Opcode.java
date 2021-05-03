@@ -31,19 +31,21 @@ public enum Opcode
 	//control flow
 	jump(true),
 	jumpz(true),
-	eval,
+
+	//functions
+	mark(true),
+	apply,
+	targ(true),
 	return_(true, "return"),
+
+	//closures
+	eval,
 
 	//heap
 	getbasic,
 	mkbasic,
 	mkvec(true),
-	mkfunval(true),
-
-	//TODO sort
-	targ(true),
-	mark(true),
-	apply;
+	mkfunval(true);
 
 	private final boolean	hasImmediate;
 	private final String	opcodeName;
