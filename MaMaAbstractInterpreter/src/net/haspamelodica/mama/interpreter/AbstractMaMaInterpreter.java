@@ -53,8 +53,25 @@ public class AbstractMaMaInterpreter
 		execHook(executedInstrPointer, instruction);
 		switch(instruction.getOpcode())
 		{
+			case add:
+				stack.pushBasic(stack.popBasic() + stack.popBasic());
+				return true;
+			case mul:
+				stack.pushBasic(stack.popBasic() * stack.popBasic());
+				return true;
 			case loadc:
 				stack.pushBasic(instruction.getImmediate());
+				return true;
+			case pushloc:
+				stack.pushHeapReference(stack.getHeapReferenceRelative(instruction.getImmediate()));
+				return true;
+			case pushglob:
+				stack.pushHeapReference(globalPointer.checkVector().get(instruction.getImmediate()));
+				return true;
+			case slide:
+				HeapObject remainingValue = stack.popHeapReference();
+				stack.popMultiple(instruction.getImmediate());
+				stack.pushHeapReference(remainingValue);
 				return true;
 			case getbasic:
 				stack.pushBasic(stack.popHeapReference().checkBasicValue().getValue());
