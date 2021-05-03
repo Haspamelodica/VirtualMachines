@@ -3,8 +3,10 @@ package net.haspamelodica.mama.interpreter;
 import java.util.List;
 
 import net.haspamelodica.mama.interpreter.exceptions.InterpreterException;
+import net.haspamelodica.mama.interpreter.heap.Function;
 import net.haspamelodica.mama.interpreter.heap.Heap;
 import net.haspamelodica.mama.interpreter.heap.HeapObject;
+import net.haspamelodica.mama.interpreter.heap.Vector;
 import net.haspamelodica.mama.interpreter.stack.Stack;
 import net.haspamelodica.mama.model.Instruction;
 import net.haspamelodica.mama.model.MaMaProgram;
@@ -72,6 +74,20 @@ public class AbstractMaMaInterpreter
 				HeapObject remainingValue = stack.popHeapReference();
 				stack.popMultiple(instruction.getImmediate());
 				stack.pushHeapReference(remainingValue);
+				return true;
+			case mark:
+				stack.pushHeapReference(getGlobalPointer());
+				stack.pushBasic(getFramePointer());//TODO keep the information that this value represents a stack pointer
+				stack.pushBasic(instruction.getImmediate());//TODO keep the information that this value represents a code pointer
+				setFramePointer(stack.getStackPointer());
+				return true;
+			case apply:
+				Function calledFunction = stack.popHeapReference().checkFunction();
+				setGlobalPointer(calledFunction.getGp());
+				setCodePointer(calledFunction.getCodePointer());
+				Vector arguments = calledFunction.getArguments().checkVector();
+				for(int i = 0; i < arguments.getLength(); i ++)
+					stack.pushHeapReference(arguments.get(i));
 				return true;
 			case getbasic:
 				stack.pushBasic(stack.popHeapReference().checkBasicValue().getValue());
