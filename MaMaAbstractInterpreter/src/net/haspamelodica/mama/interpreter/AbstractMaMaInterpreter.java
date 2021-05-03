@@ -54,7 +54,7 @@ public class AbstractMaMaInterpreter
 				stack.pushBasic(instruction.getImmediate());
 				return true;
 			case getbasic:
-				stack.pushBasic(stack.popHeapReference().getContent().checkBasicValue().getValue());
+				stack.pushBasic(stack.popHeapReference().checkBasicValue().getValue());
 				return true;
 			case mkbasic:
 				stack.pushHeapReference(heap.createBasic(stack.popBasic()));
