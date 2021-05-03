@@ -24,16 +24,26 @@ public enum Opcode
 
 	//data moving
 	loadc(true),
+	pushloc(true),
+	pushglob(true),
+	slide(true),
 
-	//	//control flow
+	//control flow
 	jump(true),
 	jumpz(true),
+	eval,
+	return_(true, "return"),
 
 	//heap
 	getbasic,
 	mkbasic,
 	mkvec(true),
-	mkfunval(true);
+	mkfunval(true),
+
+	//TODO sort
+	targ(true),
+	mark(true),
+	apply;
 
 	private final boolean	hasImmediate;
 	private final String	opcodeName;
