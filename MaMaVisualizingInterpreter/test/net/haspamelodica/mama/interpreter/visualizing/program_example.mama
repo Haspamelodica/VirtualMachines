@@ -1,0 +1,88 @@
+mark A
+mkvec 0
+mkclos A_0
+jump B
+A_0:
+loadc 5
+mkbasic
+update
+B:
+alloc 1
+pushloc 0
+mkvec 1
+mkclos A_1
+jump B_0
+A_1:
+pushglob 0
+mkvec 1
+mkfunval A_2
+jump B_1
+A_2:
+targ 2
+pushloc 1
+eval
+getbasic
+loadc 1
+leq
+jumpz A_3
+pushloc 0
+eval
+jump B_2
+A_3:
+mark A_4
+pushloc 4
+mkvec 1
+mkclos A_5
+jump B_3
+A_5:
+pushglob 0
+eval
+getbasic
+loadc 1
+sub
+mkbasic
+update
+B_3:
+pushloc 4
+pushloc 6
+mkvec 2
+mkclos A_6
+jump B_4
+A_6:
+pushglob 0
+eval
+getbasic
+pushglob 1
+eval
+getbasic
+mul
+mkbasic
+update
+B_4:
+pushglob 0
+eval
+apply
+B_2:
+A_4:
+return 2
+B_1:
+update
+B_0:
+rewrite 1
+mark A_7
+mkvec 0
+mkclos A_8
+jump B_5
+A_8:
+loadc 1
+mkbasic
+update
+B_5:
+pushloc 4
+eval
+apply
+A_7:
+slide 1
+apply
+A:
+halt

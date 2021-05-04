@@ -3,6 +3,7 @@ package net.haspamelodica.puf.compiler;
 import java.util.List;
 
 import net.haspamelodica.puf.compiler.environment.AddressEnvironment;
+import net.haspamelodica.puf.model.PuFProgram;
 import net.haspamelodica.puf.model.expressions.Binary;
 import net.haspamelodica.puf.model.expressions.Conditional;
 import net.haspamelodica.puf.model.expressions.Binary.BinaryOp;
@@ -56,11 +57,15 @@ public class PuFCompilerPlayground
 		letrecExample.appendCodeV(assembler, new AddressEnvironment(), 0, true);
 		System.out.println("--- letrec example:");
 		System.out.println(assembler.assemble());
-		
+
 		Expression closureExample = new Binary(new Variable("a"), BinaryOp.TIMES, new Variable("a"));
 		assembler = new Assembler();
 		closureExample.appendCodeC(assembler, new AddressEnvironment().withLocalVariable("a", 0), 1, false);
 		System.out.println("--- closure example:");
 		System.out.println(assembler.assemble());
+
+		PuFProgram programExample = new PuFProgram(new FunctionApplication(letrecExample, List.of(new IntConstant(5))));
+		System.out.println("--- program example:");
+		System.out.println(PuFCompiler.compile(programExample, false));
 	}
 }
