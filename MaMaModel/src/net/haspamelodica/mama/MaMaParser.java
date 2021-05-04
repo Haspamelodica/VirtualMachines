@@ -58,7 +58,7 @@ public class MaMaParser
 	private static void parseInstruction(String line, List<InstructionForDebugging> instructions, Set<LabelReference> labelReferences)
 	{
 		String[] parts = line.split("\\h+");
-		Opcode opcode = Opcode.valueOf(parts[0]);
+		Opcode opcode = Opcode.forOpcodeName(parts[0]);
 		InstructionForDebugging instruction;
 		if(opcode.hasImmediate())
 		{

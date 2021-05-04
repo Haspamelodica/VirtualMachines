@@ -1,5 +1,11 @@
 package net.haspamelodica.mama.model;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public enum Opcode
 {
 	//arithmetic
@@ -84,5 +90,13 @@ public enum Opcode
 	public String toString()
 	{
 		return getOpcodeName();
+	}
+
+	private static final Map<String, Opcode> opcodesByName = Stream.of(values())
+			.collect(Collectors.toUnmodifiableMap(Opcode::getOpcodeName, Function.identity()));
+
+	public static Opcode forOpcodeName(String opcodeName)
+	{
+		return Objects.requireNonNull(opcodesByName.get(opcodeName), "Unknown opcode: " + opcodeName);
 	}
 }
