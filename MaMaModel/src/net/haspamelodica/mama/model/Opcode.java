@@ -28,11 +28,12 @@ public enum Opcode
 	geq,
 	not,
 
-	//data moving
+	//variables
 	loadc(true),
 	pushloc(true),
 	pushglob(true),
 	slide(true),
+	alloc(true),
 
 	//control flow
 	jump(true),
@@ -46,6 +47,7 @@ public enum Opcode
 
 	//closures
 	eval,
+	rewrite(true),
 
 	//heap
 	getbasic,
