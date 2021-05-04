@@ -93,6 +93,9 @@ public class AbstractMaMaInterpreter
 			case jump:
 				jump(instruction.getImmediate());
 				return true;
+			case jumpz:
+				jumpz(instruction.getImmediate());
+				return true;
 			case mark:
 				mark(instruction.getImmediate());
 				return true;
@@ -238,6 +241,11 @@ public class AbstractMaMaInterpreter
 	private void jump(int target)
 	{
 		setCodePointer(target);
+	}
+	private void jumpz(int target)
+	{
+		if(stack.popBasic() == 0)
+			setCodePointer(target);
 	}
 	private void mark(int returnAddress)
 	{
