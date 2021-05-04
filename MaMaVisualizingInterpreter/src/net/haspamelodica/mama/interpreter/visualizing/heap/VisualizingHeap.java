@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.haspamelodica.mama.interpreter.heap.BasicValue;
+import net.haspamelodica.mama.interpreter.heap.Closure;
 import net.haspamelodica.mama.interpreter.heap.Function;
 import net.haspamelodica.mama.interpreter.heap.Heap;
 import net.haspamelodica.mama.interpreter.heap.HeapObject;
@@ -42,15 +43,21 @@ public class VisualizingHeap implements Heap
 		return new VisualizingBasicValue(value);
 	}
 	@Override
-	public Vector createVectorContent(List<HeapObject> referencedObjects)
+	public Closure createClosureContent(int codePointer, HeapObject globalPointer)
 	{
-		return new VisualizingVector(referencedObjects);
+		return new VisualizingClosure(codePointer, globalPointer);
 	}
 	@Override
 	public Function createFunctionContent(int codePointer, HeapObject arguments, HeapObject globalPointer)
 	{
 		return new VisualizingFunction(codePointer, arguments, globalPointer);
 	}
+	@Override
+	public Vector createVectorContent(List<HeapObject> referencedObjects)
+	{
+		return new VisualizingVector(referencedObjects);
+	}
+
 	@Override
 	public HeapObject createObject(HeapObjectContent content)
 	{
