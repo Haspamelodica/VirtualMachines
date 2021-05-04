@@ -56,5 +56,11 @@ public class PuFCompilerPlayground
 		letrecExample.appendCodeV(assembler, new AddressEnvironment(), 0, true);
 		System.out.println("--- letrec example:");
 		System.out.println(assembler.assemble());
+		
+		Expression closureExample = new Binary(new Variable("a"), BinaryOp.TIMES, new Variable("a"));
+		assembler = new Assembler();
+		closureExample.appendCodeC(assembler, new AddressEnvironment().withLocalVariable("a", 0), 1, false);
+		System.out.println("--- closure example:");
+		System.out.println(assembler.assemble());
 	}
 }

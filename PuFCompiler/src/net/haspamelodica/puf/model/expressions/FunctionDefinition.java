@@ -2,7 +2,6 @@ package net.haspamelodica.puf.model.expressions;
 
 import static net.haspamelodica.mama.model.Opcode.jump;
 import static net.haspamelodica.mama.model.Opcode.mkfunval;
-import static net.haspamelodica.mama.model.Opcode.mkvec;
 import static net.haspamelodica.mama.model.Opcode.return_;
 import static net.haspamelodica.mama.model.Opcode.targ;
 
@@ -40,19 +39,10 @@ public class FunctionDefinition implements Expression
 		for(int parameterIndex = 0; parameterIndex < parameterNames.size(); parameterIndex ++)
 			rhoInner = rhoInner.withLocalVariable(parameterNames.get(parameterIndex), -parameterIndex);
 
-		//add global variables to rho; create vector containing global variables
-		Set<String> freeVariables = getFreeVariables();
-		int globalVariableIndex = 0;
-		for(String globalVariable : freeVariables)
-		{
-			rho.appendGetvar(assembler, globalVariable, stackDistance + globalVariableIndex);
-			rhoInner = rhoInner.withGlobalVariable(globalVariable, globalVariableIndex);
-			globalVariableIndex ++;
-		}
-		assembler.append(mkvec, globalVariableIndex);
-		Label A = assembler.createLabel("A");
+		rhoInner = makeGlobalVector(assembler, rho, stackDistance, rhoInner);
 
 		//create function object
+		Label A = assembler.createLabel("A");
 		assembler.append(mkfunval, A);
 		Label B = assembler.createLabel("B");
 		assembler.append(jump, B);
