@@ -132,6 +132,8 @@ public class AbstractMaMaInterpreter
 			case mkvec:
 				mkvec(instruction.getImmediate());
 				return true;
+			case halt:
+				return false;
 			default:
 				throw new InterpreterException("Unimplemented opcode: " + instruction.getOpcode());
 		}
