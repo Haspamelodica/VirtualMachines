@@ -47,13 +47,15 @@ public enum Opcode
 
 	//closures
 	eval,
+	update,
 	rewrite(true),
 
 	//heap
 	getbasic,
 	mkbasic,
-	mkvec(true),
-	mkfunval(true);
+	mkclos(true),
+	mkfunval(true),
+	mkvec(true);
 
 	private final boolean	hasImmediate;
 	private final String	opcodeName;
