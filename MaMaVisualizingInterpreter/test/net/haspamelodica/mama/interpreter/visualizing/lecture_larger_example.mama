@@ -1,0 +1,23 @@
+loadc 17
+mkbasic
+pushloc 0
+mkvec 1
+mkfunval A
+jump B
+A:
+targ 1
+pushglob 0
+getbasic
+pushloc 1
+getbasic
+add
+mkbasic
+return 1
+B:
+mark A_0
+loadc 42
+mkbasic
+pushloc 4
+apply
+A_0:
+slide 2
