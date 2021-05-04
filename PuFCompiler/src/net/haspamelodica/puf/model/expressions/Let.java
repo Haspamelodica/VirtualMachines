@@ -12,20 +12,20 @@ public class Let implements Expression
 {
 	private final String		name;
 	private final Expression	variableValue;
-	private final Expression	resultValue;
+	private final Expression	body;
 
-	public Let(String name, Expression variableValue, Expression resultValue)
+	public Let(String name, Expression variableValue, Expression body)
 	{
 		this.name = name;
 		this.variableValue = variableValue;
-		this.resultValue = resultValue;
+		this.body = body;
 	}
 
 	@Override
 	public Set<String> getFreeVariables()
 	{
 		Set<String> freeVariables = new HashSet<>();
-		freeVariables.addAll(resultValue.getFreeVariables());
+		freeVariables.addAll(body.getFreeVariables());
 		//name is not free in resultValue...
 		freeVariables.remove(name);
 		//...but is free in variableValue.
@@ -46,10 +46,10 @@ public class Let implements Expression
 		int stackDistanceInner = stackDistance + 1;
 
 		//Optimization for nested Lets
-		if(resultValue instanceof Let)
-			return 1 + ((Let) resultValue).appendCodeVWithoutSlide(assembler, rhoInner, stackDistanceInner, cbv);
+		if(body instanceof Let)
+			return 1 + ((Let) body).appendCodeVWithoutSlide(assembler, rhoInner, stackDistanceInner, cbv);
 
-		resultValue.appendCodeV(assembler, rhoInner, stackDistanceInner, cbv);
+		body.appendCodeV(assembler, rhoInner, stackDistanceInner, cbv);
 		return 1;
 	}
 
@@ -61,8 +61,8 @@ public class Let implements Expression
 	{
 		return variableValue;
 	}
-	public Expression getResultValue()
+	public Expression getBody()
 	{
-		return resultValue;
+		return body;
 	}
 }
