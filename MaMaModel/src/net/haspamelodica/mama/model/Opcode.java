@@ -38,6 +38,7 @@ public enum Opcode
 	//control flow
 	jump(true),
 	jumpz(true),
+	halt,
 
 	//functions
 	mark(true),
