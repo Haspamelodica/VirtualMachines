@@ -1,6 +1,6 @@
 package net.haspamelodica.mama.interpreter.visualizing.gui;
 
-import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.drawHeapReferenceArrow;
+import static net.haspamelodica.mama.interpreter.visualizing.gui.GUIUtils.*;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -75,10 +75,12 @@ public class HeapGUI extends ZoomableCanvas
 			if(e.getType() == Type.HEAP_REFERENCE)
 			{
 				VisualizingHeapObject referencedObject = ((HeapReferenceSE) e).getReferencedObject();
-				Rectangle referencedObjectBounds = worldToCanvasCoords(referencedObject.getBounds());
-				drawHeapReferenceArrow(gc,
-						new Rectangle(stackOffset.x, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i, StackGUI.WIDTH, StackGUI.ELEMENT_HEIGHT),
-						referencedObjectBounds);
+				Rectangle stackElementBounds = new Rectangle(stackOffset.x, stackOffset.y + StackGUI.ELEMENT_HEIGHT * i,
+						StackGUI.WIDTH, StackGUI.ELEMENT_HEIGHT);
+				if(referencedObject == null)
+					drawTextCentered(gc, "null", stackElementBounds);
+				else
+					drawHeapReferenceArrow(gc, stackElementBounds, worldToCanvasCoords(referencedObject.getBounds()));
 			}
 		}
 	}

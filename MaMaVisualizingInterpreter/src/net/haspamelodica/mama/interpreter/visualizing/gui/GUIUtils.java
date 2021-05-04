@@ -34,12 +34,20 @@ public class GUIUtils
 		gc.setLineWidth(oldLineWidth);
 	}
 
+	public static void drawTextCentered(GeneralGC gc, String text, Rectangle rect)
+	{
+		drawTextCentered(gc, text, rect.x, rect.y, rect.width, rect.height);
+	}
 	public static void drawTextCentered(GeneralGC gc, String text, double x, double y, double width, double height)
 	{
 		net.haspamelodica.swt.helper.swtobjectwrappers.Point textExtent = gc.textExtent(text);
 		double xOff = width < 0 ? 0 : (width - textExtent.x) / 2;
 		double yOff = height < 0 ? 0 : (height - textExtent.y) / 2;
 		gc.drawText(text, x + xOff, y + yOff, true);
+	}
+	public static void drawTextCentered(GC gc, String text, org.eclipse.swt.graphics.Rectangle rect)
+	{
+		drawTextCentered(gc, text, rect.x, rect.y, rect.width, rect.height);
 	}
 	public static void drawTextCentered(GC gc, String text, int x, int y, int width, int height)
 	{
