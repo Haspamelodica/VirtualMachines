@@ -3,9 +3,11 @@ package net.haspamelodica.mama.interpreter;
 import java.util.List;
 
 import net.haspamelodica.mama.interpreter.exceptions.InterpreterException;
+import net.haspamelodica.mama.interpreter.heap.Closure;
 import net.haspamelodica.mama.interpreter.heap.Function;
 import net.haspamelodica.mama.interpreter.heap.Heap;
 import net.haspamelodica.mama.interpreter.heap.HeapObject;
+import net.haspamelodica.mama.interpreter.heap.Tag;
 import net.haspamelodica.mama.interpreter.heap.Vector;
 import net.haspamelodica.mama.interpreter.stack.Stack;
 import net.haspamelodica.mama.model.Instruction;
@@ -55,12 +57,24 @@ public class AbstractMaMaInterpreter
 		execHook(executedInstrPointer, instruction);
 		switch(instruction.getOpcode())
 		{
-			case add:
-				add();
-				return true;
-			case mul:
-				mul();
-				return true;
+			//@formatter:off
+			case add: add(); return true;
+			case sub: sub(); return true;
+			case mul: mul(); return true;
+			case div: div(); return true;
+			case mod: mod(); return true;
+			case and: and(); return true;
+			case or : or (); return true;
+			case xor: xor(); return true;
+			case neg: neg(); return true;
+			case eq : eq (); return true;
+			case neq: neq(); return true;
+			case le : le (); return true;
+			case leq: leq(); return true;
+			case gr : gr (); return true;
+			case geq: geq(); return true;
+			case not: not(); return true;
+			//@formatter:on
 			case loadc:
 				loadc(instruction.getImmediate());
 				return true;
@@ -91,6 +105,12 @@ public class AbstractMaMaInterpreter
 			case return_:
 				return_(instruction.getImmediate());
 				return true;
+			case eval:
+				eval();
+				return true;
+			case update:
+				update();
+				return true;
 			case rewrite:
 				rewrite(instruction.getImmediate());
 				return true;
@@ -100,11 +120,14 @@ public class AbstractMaMaInterpreter
 			case mkbasic:
 				mkbasic();
 				return true;
-			case mkvec:
-				mkvec(instruction.getImmediate());
+			case mkclos:
+				mkclos(instruction.getImmediate());
 				return true;
 			case mkfunval:
 				mkfunval(instruction.getImmediate());
+				return true;
+			case mkvec:
+				mkvec(instruction.getImmediate());
 				return true;
 			default:
 				throw new InterpreterException("Unimplemented opcode: " + instruction.getOpcode());
@@ -113,11 +136,81 @@ public class AbstractMaMaInterpreter
 
 	private void add()
 	{
-		stack.pushBasic(stack.popBasic() + stack.popBasic());
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() + o1);
+	}
+	private void sub()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() - o1);
 	}
 	private void mul()
 	{
-		stack.pushBasic(stack.popBasic() * stack.popBasic());
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() * o1);
+	}
+	private void div()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() / o1);
+	}
+	private void mod()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() % o1);
+	}
+	private void and()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() & o1);
+	}
+	private void or()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() | o1);
+	}
+	private void xor()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() ^ o1);
+	}
+	private void neg()
+	{
+		stack.pushBasic(-stack.popBasic());
+	}
+	private void eq()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() == o1 ? 1 : 0);
+	}
+	private void neq()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() != o1 ? 1 : 0);
+	}
+	private void le()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() < o1 ? 1 : 0);
+	}
+	private void leq()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() <= o1 ? 1 : 0);
+	}
+	private void gr()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() > o1 ? 1 : 0);
+	}
+	private void geq()
+	{
+		int o1 = stack.popBasic();
+		stack.pushBasic(stack.popBasic() >= o1 ? 1 : 0);
+	}
+	private void not()
+	{
+		stack.pushBasic(stack.popBasic() == 0 ? 1 : 0);
 	}
 	private void loadc(int value)
 	{
@@ -182,6 +275,25 @@ public class AbstractMaMaInterpreter
 			apply();
 		}
 	}
+	private void eval()
+	{
+		HeapObject heapObject = stack.getHeapReferenceRelative(0);
+		if(heapObject.getContent().getTag() != Tag.C)
+			return;
+		Closure closure = heapObject.checkClosure();
+
+		stack.pushHeapReference(getGlobalPointer());
+		stack.pushBasic(getFramePointer());//TODO keep the information that this value represents a stack pointer
+		stack.pushBasic(getCodePointer());//TODO keep the information that this value represents a code pointer
+		setFramePointer(stack.getStackPointer());
+		setCodePointer(closure.getCodePointer());
+		setGlobalPointer(closure.getGlobalPointer());
+	}
+	private void update()
+	{
+		popenv();
+		rewrite(1);
+	}
 	private void rewrite(int offsetFromStackPointer)
 	{
 		stack.getHeapReferenceRelative(offsetFromStackPointer).setContent(stack.popHeapReference().getContent());
@@ -194,13 +306,17 @@ public class AbstractMaMaInterpreter
 	{
 		stack.pushHeapReference(heap.createBasic(stack.popBasic()));
 	}
-	private void mkvec(int valueCount)
+	private void mkclos(int bodyCodePointer)
 	{
-		stack.pushHeapReference(createVector(valueCount));
+		stack.pushHeapReference(heap.createClosure(bodyCodePointer, stack.popHeapReference()));
 	}
 	private void mkfunval(int bodyCodePointer)
 	{
 		stack.pushHeapReference(heap.createFunction(bodyCodePointer, heap.createVector(List.of()), stack.popHeapReference()));
+	}
+	private void mkvec(int valueCount)
+	{
+		stack.pushHeapReference(createVector(valueCount));
 	}
 	private void popenv()
 	{
