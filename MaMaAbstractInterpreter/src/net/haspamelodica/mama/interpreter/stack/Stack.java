@@ -1,8 +1,9 @@
 package net.haspamelodica.mama.interpreter.stack;
 
 import net.haspamelodica.mama.interpreter.heap.HeapObject;
+import net.haspamelodica.mama.interpreter.heap.HeapReachabilityProvider;
 
-public interface Stack
+public interface Stack extends HeapReachabilityProvider
 {
 	public void clear();
 

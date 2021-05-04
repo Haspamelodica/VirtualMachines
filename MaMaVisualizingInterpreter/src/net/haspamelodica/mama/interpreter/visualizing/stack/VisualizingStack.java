@@ -3,6 +3,7 @@ package net.haspamelodica.mama.interpreter.visualizing.stack;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import net.haspamelodica.mama.interpreter.exceptions.StackException;
 import net.haspamelodica.mama.interpreter.heap.HeapObject;
@@ -10,6 +11,7 @@ import net.haspamelodica.mama.interpreter.stack.Stack;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.BasicValueSE;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.HeapReferenceSE;
 import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElement;
+import net.haspamelodica.mama.interpreter.visualizing.stack.elements.StackElement.Type;
 
 public class VisualizingStack implements Stack
 {
@@ -99,5 +101,12 @@ public class VisualizingStack implements Stack
 			throw new StackException("Popping more values than are on the stack: " + numberOfValuesToPop);
 		elementsM.subList(0, numberOfValuesToPop).clear();
 		observer.run();
+	}
+
+	@Override
+	public Stream<HeapObject> getReachableObjects()
+	{
+		return getElements().stream().filter(e -> e.getType() == Type.HEAP_REFERENCE)
+				.map(e -> (HeapReferenceSE) e).map(HeapReferenceSE::getReferencedObject);
 	}
 }

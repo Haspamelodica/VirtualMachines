@@ -2,7 +2,12 @@ package net.haspamelodica.mama.interpreter.visualizing.heap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.haspamelodica.mama.interpreter.heap.BasicValue;
 import net.haspamelodica.mama.interpreter.heap.Closure;
@@ -10,7 +15,10 @@ import net.haspamelodica.mama.interpreter.heap.Function;
 import net.haspamelodica.mama.interpreter.heap.Heap;
 import net.haspamelodica.mama.interpreter.heap.HeapObject;
 import net.haspamelodica.mama.interpreter.heap.HeapObjectContent;
+import net.haspamelodica.mama.interpreter.heap.HeapReachabilityProvider;
 import net.haspamelodica.mama.interpreter.heap.Vector;
+import net.haspamelodica.mama.interpreter.visualizing.heap.objectelements.DrawableHeapObjectElement.Type;
+import net.haspamelodica.mama.interpreter.visualizing.heap.objectelements.HeapReferenceHOE;
 
 public class VisualizingHeap implements Heap
 {
@@ -18,6 +26,8 @@ public class VisualizingHeap implements Heap
 
 	private final List<VisualizingHeapObject>	heapObjectsM;
 	private final List<VisualizingHeapObject>	heapObjectsU;
+
+	private final Set<HeapReachabilityProvider> externalReachabilityProviders;
 
 	private final Runnable observer;
 
@@ -27,6 +37,7 @@ public class VisualizingHeap implements Heap
 	{
 		this.heapObjectsM = new ArrayList<>();
 		this.heapObjectsU = Collections.unmodifiableList(heapObjectsM);
+		this.externalReachabilityProviders = new HashSet<>();
 		this.observer = observer;
 	}
 
@@ -65,6 +76,44 @@ public class VisualizingHeap implements Heap
 		heapObjectsM.add(newObject);
 		observer.run();
 		return newObject;
+	}
+
+	@Override
+	public void addExternalReachabilityProvider(HeapReachabilityProvider reachabilityProvider)
+	{
+		externalReachabilityProviders.add(reachabilityProvider);
+	}
+	@Override
+	public void gc()
+	{
+		Set<VisualizingHeapObject> externallyReachableObjects = externalReachabilityProviders.stream()
+				.flatMap(HeapReachabilityProvider::getReachableObjects)
+				.filter(Objects::nonNull)
+				.map(o -> (VisualizingHeapObject) o)
+				.collect(Collectors.toUnmodifiableSet());
+
+		Set<VisualizingHeapObject> lastReachableObjects = externallyReachableObjects;
+		for(;;)
+		{
+			Set<VisualizingHeapObject> newReachableObjects = Stream.concat(
+					externallyReachableObjects.stream(),
+					lastReachableObjects.stream()
+							.map(VisualizingHeapObject::getContent)
+							.map(VisualizingHeapObjectContent::getElements)
+							.flatMap(List::stream)
+							.filter(e -> e.getType() == Type.HEAP_REFERENCE)
+							.map(e -> (HeapReferenceHOE) e)
+							.map(HeapReferenceHOE::getReferencedObject)
+							.filter(Objects::nonNull))
+					.collect(Collectors.toUnmodifiableSet());
+
+			if(newReachableObjects.equals(lastReachableObjects))
+				break;
+			lastReachableObjects = newReachableObjects;
+		}
+
+		heapObjectsM.retainAll(lastReachableObjects);
+		observer.run();
 	}
 
 	public List<VisualizingHeapObject> getHeapObjects()

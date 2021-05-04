@@ -36,6 +36,7 @@ public class MaMaGUI
 	private ScrolledComposite	codeScroller;
 	private CodeGUI				codeGUI;
 	private Button				buttonStep;
+	private Button				buttonGC;
 	private HeapGUI				heapGUI;
 	private ScrolledComposite	stackScroller;
 	private StackGUI			stackGUI;
@@ -65,12 +66,14 @@ public class MaMaGUI
 		shell.setLayout(new FormLayout());
 
 		setupCodeScroller(shell, program, getCurrentCodePointer);
+		setupButtonStep(shell);
+		setupButtonGC(shell, heap);
 		setupHeapGUI(stack, heap);
 		setupStackScroller(shell, stack);
-		setupButtonStep(shell);
 
 		codeScroller.setLayoutData(formData(fa(), fa(), null, fa(buttonStep, -MARGIN)));
-		buttonStep.setLayoutData(formData(fa(0, MARGIN), null, fa(heapGUI, -MARGIN), fa(100, -MARGIN)));
+		buttonStep.setLayoutData(formData(fa(0, MARGIN), null, fa(heapGUI, -MARGIN), fa(buttonGC, -MARGIN)));
+		buttonGC.setLayoutData(formData(fa(0, MARGIN), null, fa(heapGUI, -MARGIN), fa(100, -MARGIN)));
 		heapGUI.setLayoutData(formData(fa(codeScroller), fa(), fa(stackScroller), fa(100)));
 		stackScroller.setLayoutData(formData(null, fa(), fa(100), fa(100)));
 	}
@@ -93,6 +96,22 @@ public class MaMaGUI
 	public void codePointerChanged()
 	{
 		display.asyncExec(codeGUI::redraw);
+	}
+	private void setupButtonStep(Composite parent)
+	{
+		buttonStep = new Button(parent, SWT.PUSH);
+		buttonStep.setText("Step");
+		buttonStep.addListener(SWT.Selection, e ->
+		{
+			if(!callback.step())
+				buttonStep.setEnabled(false);
+		});
+	}
+	private void setupButtonGC(Composite parent, VisualizingHeap heap)
+	{
+		buttonGC = new Button(parent, SWT.PUSH);
+		buttonGC.setText("GC heap");
+		buttonGC.addListener(SWT.Selection, e -> heap.gc());
 	}
 	private void setupHeapGUI(VisualizingStack stack, VisualizingHeap heap)
 	{
@@ -127,12 +146,6 @@ public class MaMaGUI
 		display.asyncExec(() -> stackScroller.setMinHeight(stackGUI.getHeight()));
 		display.asyncExec(stackGUI::redraw);
 		display.asyncExec(heapGUI::redraw);
-	}
-	private void setupButtonStep(Composite parent)
-	{
-		buttonStep = new Button(parent, SWT.PUSH);
-		buttonStep.setText("Step");
-		buttonStep.addListener(SWT.Selection, e -> callback.step());
 	}
 	private FormData formData(FormAttachment left, FormAttachment top, FormAttachment right, FormAttachment bottom)
 	{

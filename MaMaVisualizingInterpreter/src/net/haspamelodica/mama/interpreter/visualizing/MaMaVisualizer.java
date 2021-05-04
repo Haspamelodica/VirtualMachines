@@ -36,7 +36,8 @@ public class MaMaVisualizer
 			protected void globalPointerHook(HeapObject newGlobalPointer)
 			{
 				//TODO visualize global pointer
-			}@Override
+			}
+			@Override
 			protected void framePointerHook(int newFramePointer)
 			{
 				//TODO visualize frame pointer
@@ -45,9 +46,9 @@ public class MaMaVisualizer
 		this.gui = new MaMaGUI(program, stack, heap, interpreter::getCodePointer, new GUICallback()
 		{
 			@Override
-			public void step()
+			public boolean step()
 			{
-				interpreter.step();
+				return interpreter.step();
 			}
 		});
 	}

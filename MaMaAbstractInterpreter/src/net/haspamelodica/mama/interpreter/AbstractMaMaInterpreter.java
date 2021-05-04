@@ -1,6 +1,7 @@
 package net.haspamelodica.mama.interpreter;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import net.haspamelodica.mama.interpreter.exceptions.InterpreterException;
 import net.haspamelodica.mama.interpreter.heap.Closure;
@@ -28,6 +29,8 @@ public class AbstractMaMaInterpreter
 		this.program = program;
 		this.stack = stack;
 		this.heap = heap;
+		heap.addExternalReachabilityProvider(stack);
+		heap.addExternalReachabilityProvider(() -> Stream.of(globalPointer));
 	}
 
 	public void run()

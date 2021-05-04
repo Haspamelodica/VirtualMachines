@@ -26,4 +26,9 @@ public interface Heap
 	{
 		return createObject(createVectorContent(referencedObjects));
 	}
+
+	public default void addExternalReachabilityProvider(HeapReachabilityProvider reachabilityProvider)
+	{}
+	public default void gc()
+	{}
 }
