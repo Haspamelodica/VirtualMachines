@@ -61,82 +61,56 @@ public class AbstractMaMaInterpreter
 		switch(instruction.getOpcode())
 		{
 			//@formatter:off
-			case add: add(); return true;
-			case sub: sub(); return true;
-			case mul: mul(); return true;
-			case div: div(); return true;
-			case mod: mod(); return true;
-			case and: and(); return true;
-			case or : or (); return true;
-			case xor: xor(); return true;
-			case neg: neg(); return true;
-			case eq : eq (); return true;
-			case neq: neq(); return true;
-			case le : le (); return true;
-			case leq: leq(); return true;
-			case gr : gr (); return true;
-			case geq: geq(); return true;
-			case not: not(); return true;
+			//arithmetic
+			case add:      add     ();                           return true;
+			case sub:      sub     ();                           return true;
+			case mul:      mul     ();                           return true;
+			case div:      div     ();                           return true;
+			case mod:      mod     ();                           return true;
+			case and:      and     ();                           return true;
+			case or:       or      ();                           return true;
+			case xor:      xor     ();                           return true;
+			case neg:      neg     ();                           return true;
+
+			//conditionals
+			case eq:       eq      ();                           return true;
+			case neq:      neq     ();                           return true;
+			case le:       le      ();                           return true;
+			case leq:      leq     ();                           return true;
+			case gr:       gr      ();                           return true;
+			case geq:      geq     ();                           return true;
+			case not:      not     ();                           return true;
+
+			//variables
+			case loadc:    loadc   (instruction.getImmediate()); return true;
+			case pushloc:  pushloc (instruction.getImmediate()); return true;
+			case pushglob: pushglob(instruction.getImmediate()); return true;
+			case slide:    slide   (instruction.getImmediate()); return true;
+			case alloc:    alloc   (instruction.getImmediate()); return true;
+
+			//control flow
+			case jump:     jump    (instruction.getImmediate()); return true;
+			case jumpz:    jumpz   (instruction.getImmediate()); return true;
+			case halt:     return false;
+
+			//functions
+			case mark:     mark    (instruction.getImmediate()); return true;
+			case apply:    apply   ();                           return true;
+			case targ:     targ    (instruction.getImmediate()); return true;
+			case return_:  return_ (instruction.getImmediate()); return true;
+
+			//closures
+			case eval:     eval    ();                           return true;
+			case update:   update  ();                           return true;
+			case rewrite:  rewrite (instruction.getImmediate()); return true;
+
+			//heap
+			case getbasic: getbasic();                           return true;
+			case mkbasic:  mkbasic ();                           return true;
+			case mkclos:   mkclos  (instruction.getImmediate()); return true;
+			case mkfunval: mkfunval(instruction.getImmediate()); return true;
+			case mkvec:    mkvec   (instruction.getImmediate()); return true;
 			//@formatter:on
-			case loadc:
-				loadc(instruction.getImmediate());
-				return true;
-			case pushloc:
-				pushloc(instruction.getImmediate());
-				return true;
-			case pushglob:
-				pushglob(instruction.getImmediate());
-				return true;
-			case slide:
-				slide(instruction.getImmediate());
-				return true;
-			case alloc:
-				alloc(instruction.getImmediate());
-				return true;
-			case jump:
-				jump(instruction.getImmediate());
-				return true;
-			case jumpz:
-				jumpz(instruction.getImmediate());
-				return true;
-			case mark:
-				mark(instruction.getImmediate());
-				return true;
-			case apply:
-				apply();
-				return true;
-			case targ:
-				targ(instruction.getImmediate());
-				return true;
-			case return_:
-				return_(instruction.getImmediate());
-				return true;
-			case eval:
-				eval();
-				return true;
-			case update:
-				update();
-				return true;
-			case rewrite:
-				rewrite(instruction.getImmediate());
-				return true;
-			case getbasic:
-				getbasic();
-				return true;
-			case mkbasic:
-				mkbasic();
-				return true;
-			case mkclos:
-				mkclos(instruction.getImmediate());
-				return true;
-			case mkfunval:
-				mkfunval(instruction.getImmediate());
-				return true;
-			case mkvec:
-				mkvec(instruction.getImmediate());
-				return true;
-			case halt:
-				return false;
 			default:
 				throw new InterpreterException("Unimplemented opcode: " + instruction.getOpcode());
 		}
