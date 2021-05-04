@@ -73,6 +73,9 @@ public class AbstractMaMaInterpreter
 			case slide:
 				slide(instruction.getImmediate());
 				return true;
+			case alloc:
+				alloc(instruction.getImmediate());
+				return true;
 			case jump:
 				jump(instruction.getImmediate());
 				return true;
@@ -87,6 +90,9 @@ public class AbstractMaMaInterpreter
 				return true;
 			case return_:
 				return_(instruction.getImmediate());
+				return true;
+			case rewrite:
+				rewrite(instruction.getImmediate());
 				return true;
 			case getbasic:
 				getbasic();
@@ -131,6 +137,11 @@ public class AbstractMaMaInterpreter
 		stack.popMultiple(numberOfValuesToPop);
 		stack.pushHeapReference(remainingValue);
 	}
+	private void alloc(int numberOfVariables)
+	{
+		for(int i = 0; i < numberOfVariables; i ++)
+			stack.pushHeapReference(heap.createClosure(-1, null));
+	}
 	private void jump(int target)
 	{
 		setCodePointer(target);
@@ -171,7 +182,10 @@ public class AbstractMaMaInterpreter
 			apply();
 		}
 	}
-
+	private void rewrite(int offsetFromStackPointer)
+	{
+		stack.getHeapReferenceRelative(offsetFromStackPointer).setContent(stack.popHeapReference().getContent());
+	}
 	private void getbasic()
 	{
 		stack.pushBasic(stack.popHeapReference().checkBasicValue().getValue());
